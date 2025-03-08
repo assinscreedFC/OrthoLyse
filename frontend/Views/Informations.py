@@ -10,6 +10,7 @@ class Informations(QWidget):
         super().__init__()
         # les dimensions de la fenetre
         self.resize(1117, 768)
+        self.setStyleSheet(("color:black;"))
         self.creerFond()
         self.creerImage()
         self.creerTexte()

@@ -1,5 +1,5 @@
-from PySide6.QtCore import Qt, QEvent
-from PySide6.QtGui import QFont, QPixmap, QFontDatabase
+from PySide6.QtCore import Qt, QEvent, QSize
+from PySide6.QtGui import QFont, QPixmap, QFontDatabase, QIcon
 from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout, QSizePolicy, QPushButton, QVBoxLayout
 
 from frontend.controllers.Menu_controllers import NavigationController
@@ -30,9 +30,7 @@ class Home(QWidget):
         # Appliquer le layout au widget central
         self.setLayout(self.layoutV)
 
-        # Enregistrement du contrôleur
-
-
+        # Enregistrement du contrÃ´leur
 
     def Header(self):
         from frontend.Widgets.Header import Header
@@ -53,21 +51,20 @@ class Home(QWidget):
 
         self.layoutV.addLayout(self.layoutH)
 
-
-
     def bottom_text(self):
         """Ajouter le texte et le bouton en bas"""
         self.bottom_text_label = QLabel(
             "Chargez un audio pour calculer les métriques linguistiques :", self)
 
-        self.font,self.font_family=self.controller.set_font('./assets/Fonts/Inter,Montserrat,Roboto/Inter/Inter-VariableFont_opsz,wght.ttf')
+        self.font, self.font_family = self.controller.set_font(
+            './assets/Fonts/Inter,Montserrat,Roboto/Inter/Inter-VariableFont_opsz,wght.ttf')
 
         layoutV = QVBoxLayout()
         layoutV.addWidget(self.bottom_text_label)
         self.bottom_text_label.setWordWrap(False)
         self.bottom_text_label.setFont(self.font)
 
-        # Bouton pour démarrer
+        # Bouton pour dÃ©marrer
         self.bottom_bouton = QPushButton("Commencer", self)
         self.bottom_bouton.setCursor(Qt.PointingHandCursor)
         self.bottom_bouton.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)  # Ajuster la largeur au contenu
@@ -82,7 +79,7 @@ class Home(QWidget):
 
         layoutV.addWidget(self.bottom_bouton, alignment=Qt.AlignCenter)
         layoutV.setSpacing(10)
-        # Créer un layout horizontal pour ajuster le positionnement
+        # CrÃ©er un layout horizontal pour ajuster le positionnement
         layoutH = QHBoxLayout()
         layoutH.addStretch(15)  # Ajout d'un stretch pour centrer horizontalement
         layoutH.addLayout(layoutV)
@@ -94,79 +91,88 @@ class Home(QWidget):
         self.controller.change_page("ModeDeChargement")
 
     def icon_info(self):
-        """Ajoute une icône d'information avec du texte"""
-        layoutH = QHBoxLayout()  # Layout horizontal pour l'icône + texte
+        """Ajoute une icÃ´ne d'information avec du texte"""
+        layoutH = QHBoxLayout()  # Layout horizontal pour l'icÃ´ne + texte
 
-        # Charger et redimensionner l'icône
+        # Charger et redimensionner l'icÃ´ne
         pixmap = QPixmap("./assets/SVG/info.svg")
+        iconInfo = QIcon(pixmap)
+        # QLabel pour l'icÃ´ne
+        #icon_label = QLabel(self)
+        #icon_label.setCursor(Qt.PointingHandCursor)
+        #icon_label.setPixmap(pixmap)
+        # icon_label.clicked.connect(self.view_info)
 
-        # QLabel pour l'icône
-        icon_label = QLabel(self)
-        icon_label.setCursor(Qt.PointingHandCursor)
-        icon_label.setPixmap(pixmap)
-
+        info_btn =QPushButton()
+        info_btn.setIcon(iconInfo)
+        info_btn.setIconSize(QSize(38, 38))
+        info_btn.setStyleSheet("border: 0px;")
+        info_btn.setCursor(Qt.PointingHandCursor)
+        info_btn.clicked.connect(self.view_info)
         layoutH.addStretch(1)
-        layoutH.addWidget(icon_label)
+        layoutH.addWidget(info_btn)
 
         # Ajouter au layout principal
         self.layoutV.addLayout(layoutH)
 
+    def view_info(self):
+        self.controller.change_page("Information")
+
     def resizeEvent(self, event):
-        """Gestion de différents événements"""
+        """Gestion de diffÃ©rents Ã©vÃ©nements"""
         self.adjustFontSize_middle(event)
         self.adjustFontSize_bottom(event)
         self.adjustFontSize_button(event)
         """Ajuste la taille et le border-radius du bouton dynamiquement."""
 
-              # Pour garder un bouton rond
+        # Pour garder un bouton rond
 
         self.bottom_bouton.setStyleSheet(
-                
-                   f""" background-color: transparent;
+
+            f""" background-color: transparent;
                     color: white;
-                    border-radius: {min(self.bottom_bouton.width(),self.bottom_bouton.height())//3}px;
+                    border-radius: {min(self.bottom_bouton.width(), self.bottom_bouton.height()) // 3}px;
                     border: 3px solid white;
                     padding: 10px;"""
-                    
-            )
+
+        )
 
     def adjustFontSize_button(self, event=None):
-        """Ajuste la taille de la police du bouton en fonction de la largeur de la fenêtre"""
+        """Ajuste la taille de la police du bouton en fonction de la largeur de la fenÃªtre"""
         if not self.parentWidget():
-            return  # Éviter une erreur si le parent n'existe pas encore
+            return  # Ã‰viter une erreur si le parent n'existe pas encore
 
-        # Définir une taille minimale et maximale
+        # DÃ©finir une taille minimale et maximale
         min_size = 10
         max_size = 14
 
-        # Calculer une taille proportionnelle à la largeur de la fenêtre
+        # Calculer une taille proportionnelle Ã  la largeur de la fenÃªtre
         new_font_size = int(self.parentWidget().width() * 0.01)  # 1% de la largeur
 
-        # S'assurer que la taille est dans les limites définies
+        # S'assurer que la taille est dans les limites dÃ©finies
         new_font_size = max(min_size, min(new_font_size, max_size))
 
         # Appliquer la nouvelle taille de police au bouton
         font = QFont(self.bottom_bouton.font().family(), new_font_size)
         self.bottom_bouton.setFont(font)
 
-        # Appliquer la même taille de police au texte en bas (bottom_text_label)
+        # Appliquer la mÃªme taille de police au texte en bas (bottom_text_label)
         font = QFont(self.bottom_text_label.font().family(), new_font_size)
         self.bottom_text_label.setFont(font)
 
-
     def adjustFontSize_middle(self, event=None):
-        """Ajuste la taille de la police en fonction de la largeur de la fenêtre"""
+        """Ajuste la taille de la police en fonction de la largeur de la fenÃªtre"""
         if not self.parentWidget():
-            return  # Éviter une erreur si le parent n'existe pas encore
+            return  # Ã‰viter une erreur si le parent n'existe pas encore
 
-        # Définir une taille minimale et maximale
+        # DÃ©finir une taille minimale et maximale
         min_size = 14
         max_size = 32
 
-        # Calculer une taille proportionnelle à la largeur de la fenêtre
+        # Calculer une taille proportionnelle Ã  la largeur de la fenÃªtre
         new_font_size = int(self.parentWidget().width() * 0.02)  # 2% de la largeur
 
-        # S'assurer que la taille est dans les limites définies
+        # S'assurer que la taille est dans les limites dÃ©finies
         new_font_size = max(min_size, min(new_font_size, max_size))
 
         # Appliquer la nouvelle taille de police
@@ -174,18 +180,18 @@ class Home(QWidget):
         self.middle_text_label.setFont(font)
 
     def adjustFontSize_bottom(self, event=None):
-        """Ajuste la taille de la police en fonction de la largeur de la fenêtre"""
+        """Ajuste la taille de la police en fonction de la largeur de la fenÃªtre"""
         if not self.parentWidget():
-            return  # Éviter une erreur si le parent n'existe pas encore
+            return  # Ã‰viter une erreur si le parent n'existe pas encore
 
-        # Définir une taille minimale et maximale
+        # DÃ©finir une taille minimale et maximale
         min_size = 10
         max_size = 14
 
-        # Calculer une taille proportionnelle à la largeur de la fenêtre
+        # Calculer une taille proportionnelle Ã  la largeur de la fenÃªtre
         new_font_size = int(self.parentWidget().width() * 0.01)  # 1% de la largeur
 
-        # S'assurer que la taille est dans les limites définies
+        # S'assurer que la taille est dans les limites dÃ©finies
         new_font_size = max(min_size, min(new_font_size, max_size))
 
         # Appliquer la nouvelle taille de police

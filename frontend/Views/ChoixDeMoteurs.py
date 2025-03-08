@@ -3,9 +3,12 @@ from PySide6.QtWidgets import QApplication, QLabel, QPushButton,QWidget,QVBoxLay
 from PySide6.QtGui import QPixmap,QIcon
 from PySide6.QtCore import Qt
 
+from frontend.controllers.Menu_controllers import NavigationController
+
 class ChoixDeMoteurs(QWidget):
     def __init__(self):
         super().__init__()
+        self.controller = NavigationController()
         print("ChoixDeMoteurs instancié !")
         self.resize(1117,768)
 
@@ -154,6 +157,7 @@ class ChoixDeMoteurs(QWidget):
                                         background-color:grey;
                                       
                                       }""")
+        self.btnValider.clicked.connect(self.retour_menu)
         #ajouter ce bouton dans un layout horizontal
         self.btnValiderLayout=QHBoxLayout()
         self.btnValiderLayout.setAlignment(Qt.AlignRight)
@@ -207,7 +211,8 @@ class ChoixDeMoteurs(QWidget):
         self.setLayout(self.mainVLayout)
         
 
-
+    def retour_menu(self):
+        self.controller.change_page("Home")
 
     def resizeEvent(self, event):
         """Redimensionner l'image de fond lorsqu'on redimensionne la fenêtre"""

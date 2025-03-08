@@ -284,8 +284,8 @@ class ImporterAudio(QWidget):
         if not self.parentWidget():
             return  # Éviter une erreur si le parent n'existe pas encore
 
-        max_size=70
-        min_size=40
+        max_size=70;
+        min_size=40;
         new_size=int(self.dropZone.height()*0.25)
         new_size = max(min_size, min(new_size, max_size))
 

@@ -1,8 +1,8 @@
 from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout, QSizePolicy, QPushButton
-from PySide6.QtGui import QFontDatabase, QFont, QFontMetrics
-from PySide6.QtCore import Qt
+from PySide6.QtGui import QFontDatabase, QFont, QFontMetrics, QIcon,QPixmap
+from PySide6.QtCore import Qt, QSize
 
-from controllers.Menu_controllers import NavigationController
+from frontend.controllers.Menu_controllers import NavigationController
 
 
 class Header(QWidget):
@@ -18,26 +18,33 @@ class Header(QWidget):
 
         self.font,self.font_family=self.controller.set_font('./assets/Fonts/Inter,Montserrat,Roboto/Inter/Inter-VariableFont_opsz,wght.ttf')
 
-        self.layout.addStretch(1)
-
         # Création du QLabel
-        self.label = QLabel("Orto<b>Lyse</b>", self)
+        self.label = QLabel("Ortho<b>Lyse</b>", self)
         self.label.setAlignment(Qt.AlignCenter)
-        self.label.setStyleSheet(f"color: black; font-family: {self.font_family};")
+        self.label.setStyleSheet(f"color: black; font-family: {self.font_family};"
+                                 f"font-size: larger")
+
+        self.btn_settings = QPushButton("")
+        self.btn_settings.setIcon(QIcon(QPixmap("./assets/SVG/settings.svg")))
+        self.btn_settings.setStyleSheet("border:0px;")
+        self.btn_settings.setIconSize(QSize(32, 32))
+        self.btn_settings.setCursor(Qt.PointingHandCursor)
+
+        self.btn_settings.clicked.connect(self.show_settings)
+
+        self.layout.addWidget(self.btn_settings)
+        self.layout.addStretch(1)
         self.layout.addWidget(self.label)
         self.setLayout(self.layout)
         self.adjustFontSize()
 
 
+    def show_settings(self):
+        self.controller.change_page("Settings")
+
 
     def change_page(self):
-        print("bghello")
         self.controller.toggle_menu()
-
-
-
-
-
 
     def resizeEvent(self, event):
         self.adjustFontSize()
