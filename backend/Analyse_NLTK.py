@@ -2,6 +2,7 @@
 # nltk.download('punkt_tab') #il faut d'abord installer ca pour utiliser le reste
 
 import nltk.tokenize as to #type:ignore
+from num2words import num2words
 from nltk.stem.snowball import SnowballStemmer #type:ignore
 
 import re 
@@ -18,16 +19,15 @@ class Analyse_NLTK:
     def __init__(self,text=""):
         self.__text=text
     
-    def __sub_punc(self):
+    def __sub_punc(self,text=None):
         """
         sert pour compter le nombre de mot dans le text
         peut potentielment etre optimiser en utilisant regexp_tokenize(s2, r'[,\.\?!"]\s*', gaps=True) a tester
         """
-        text=self.__text
-        regex = r'[-]|[_]|[^\wÀ-ÿ\s\-"]' #\w équivalent à la classe [a-zA-Z0-9_]. \s équivalent à la classe [ \t\n\r\f\v].
+        regex = r'[-]|[_]|[^\wÀ-ÿ\s\-\'\’"]' #\w équivalent à la classe [a-zA-Z0-9_]. \s équivalent à la classe [ \t\n\r\f\v].
         #la les mots comme pensa-t-elle vaut 1  quelqu'un aussi vaut 1 pour que il vale deux faut raouter \' et \’
         text=re.sub(regex,"",text) #re.sub(pattern, repl, string, count=0, flags=0)
-        #regex = r"[-]|[_]" ici pensa-t-elle vaudrais 3
+        regex = r"[-]|[_]|[\’]|[\']" #ici pensa-t-elle vaudrais 3
         return re.sub(regex," ",text)
 
 
@@ -35,10 +35,48 @@ class Analyse_NLTK:
         """
         retourne le nombre de mot dans le text
         """
-        text=self.__sub_punc()
+        #text=self.num2words(self.__text)
+        #text=self.__sub_punc(self.num2words(self.__text))
         #print(to.word_tokenize(text))
-        return to.word_tokenize(text)
-    
+
+        return to.word_tokenize(self.__sub_punc(self.num2words(self.__text)))
+
+    def num2words(self,chaine):
+        # Découper la chaîne en tokens (basé sur les espaces)
+        tokens = chaine.split()
+        resultat = []
+
+        for token in tokens:
+            # Détecte les nombres flottants en vérifiant la présence de '.' ou ',' et en s'assurant que, sans ces caractères, on a uniquement des chiffres
+            if ('.' in token or ',' in token) and token.replace('.', '').replace(',', '').isdigit():
+                # Détermine le séparateur utilisé (point ou virgule)
+                delim = '.' if '.' in token else ','
+                parties = token.split(delim)
+
+                # Partie entière (si vide, considère 0)
+                partie_entier = num2words(int(parties[0]) if parties[0] != '' else 0, lang='fr')
+                # Partie décimale (si vide, considère 0)
+                partie_decimal = num2words(int(parties[1]) if len(parties) > 1 and parties[1] != '' else 0, lang='fr')
+
+                # Remplacer les tirets pour séparer les mots composés et découper en liste
+                mots_entier = partie_entier.replace('-', ' ').split()
+                mots_decimal = partie_decimal.replace('-', ' ').split()
+
+                # Ajoute la partie entière, le mot "virgule", puis la partie décimale
+                resultat.extend(mots_entier)
+                resultat.append("virgule")
+                resultat.extend(mots_decimal)
+
+            # Si le token est un entier
+            elif token.isdigit():
+                mots = num2words(int(token), lang='fr').replace('-', ' ').split()
+                resultat.extend(mots)
+            else:
+                resultat.append(token)
+
+        # Reconstituer une chaîne à partir des tokens traités
+        return " ".join(resultat)
+
     def sent_size(self):
         """
         retourne le nombre d'ennoncer
@@ -131,8 +169,8 @@ class Analyse_NLTK:
         
         
 
-"""l'anis
-    Lors d’une belle matinée d’été, le soleil brillait haut dans le ciel. Marie, une jeune femme curieuse et passionnée, décidait de partir explorer la forêt qui se trouvait près de chez elle. « Pourquoi ne pas profiter de cette journée ? », pensa-t-elle en préparant son sac à dos.
+text="""l'anis
+    Lors d’une 105 belle 2024 matinée 2.5 d’été, le soleil brillait haut dans le ciel. Marie, une jeune femme curieuse et passionnée, décidait de partir explorer la forêt qui se trouvait près de chez elle. « Pourquoi ne pas profiter de cette journée ? », pensa-t-elle en préparant son sac à dos.
 
 Elle emporta quelques indispensables : une bouteille d’eau, des fruits, un carnet, et un stylo. Après tout, qui sait quelles idées pourraient lui venir en tête ? Ses pas, rythmés par le chant des oiseaux, la conduisirent bientôt au cœur de la forêt. Là-bas, tout semblait si paisible... mais aussi mystérieux.
 
@@ -145,9 +183,9 @@ Continuant son chemin, elle arriva finalement dans une clairière. Là, au centr
 Sa curiosité prit le dessus. Elle poussa doucement la porte – creeeeeek. À l’intérieur, elle découvrit une pièce remplie d’objets anciens : une lampe à huile, un livre poussiéreux, et une boîte mystérieuse. Alors qu’elle tendait la main pour ouvrir la boîte... un bruit derrière elle la fit sursauter !
 
 """
-phrase = "re-développement rapidement des entreprises innovantes trottiner"
+phrase = "re-développement 2,5 25 rapidement des entreprises innovantes trottiner"
 
-#print(Analyse_NLTK(phrase).morphem())
+print(Analyse_NLTK(phrase).word_size())
 
 
 # # dictionair des prefixe
