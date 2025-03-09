@@ -1,7 +1,7 @@
 import sys
 from PySide6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout,
-    QSlider, QPushButton, QSizePolicy, QLabel
+    QSlider, QPushButton, QSizePolicy, QLabel, QMenu
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon, QFont, QPalette, QColor
@@ -14,7 +14,9 @@ class AudioPlayer(QWidget):
     def __init__(self):
         super().__init__()
         self.controller=PlayerController()
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        #self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.setFixedSize((642 // 2)-40, 100) #j'ai mit ca par rapport a la plus petit tailler d'ecran il feras un peu moin de la moitier de l'ecran pour pouvoir le diviser correctemenrt avec la zone de texte
+
         self.font,self.font_family=self.controller.set_font("./assets/Fonts/Inter,Montserrat,Roboto/Inter/static/Inter_24pt-SemiBold.ttf")
 
         self.inner_widgets()
@@ -28,7 +30,6 @@ class AudioPlayer(QWidget):
 
         # Configurer le style et les propriétés du widget
         self.inner_widget.setAutoFillBackground(True)
-        self.inner_widget.setFixedSize((642 // 2)-40, 100) #j'ai mit ca par rapport a la plus petit tailler d'ecran il feras un peu moin de la moitier de l'ecran pour pouvoir le diviser correctemenrt avec la zone de texte
 
         self.inner_widget.setStyleSheet(f"""
             background-color: #ffffff;
@@ -85,22 +86,33 @@ class AudioPlayer(QWidget):
 
 
 
-    def boutton(self,file_path):
+    def boutton(self,file_path,sizeicone=3,sizebutton=40):
         button = QPushButton()
         button.setIcon(QIcon(file_path))
-        button.setIconSize((self.size() / 15))
-        button.setFixedSize(40, 40)
+        button.setIconSize((self.size() / sizeicone))
+        button.setFixedSize(sizebutton, sizebutton)
         button.setCursor(Qt.PointingHandCursor)
-        button.setStyleSheet("""
-                            QPushButton {
+        button.setStyleSheet(f"""
+                            QPushButton {{
                                 background-color: #fff;
-                                border-radius: 19px;
-                            }
-                            QPushButton:hover {
+                                border-radius: {(sizebutton//2)-1}px;
+                            }}
+                            QPushButton:hover {{
                                 background-color: #CCC;
-                            }
+                            }}
+                                QPushButton::menu-indicator {{ width: 0; height: 0; }}
+
                         """)
         return button
+
+
+
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        # Positionne le bouton "more" dans le coin supérieur droit
+        # Ici, on le place à 10 pixels du bord droit et 10 pixels du haut
+        self.more_boutton.move(self.width() - self.more_boutton.width() - 20, self.height() - self.more_boutton.height() - 35)
 
     def bottom_part(self):
         # --- Barre du bas : Boutons ---
@@ -115,7 +127,20 @@ class AudioPlayer(QWidget):
         self.play_pause_button = self.boutton("assets/SVG/play_arrow.svg")
         # Bouton avance +10s
         self.forward_button = self.boutton("assets/SVG/forward-10.svg")
+        #boutton 3 petit point
+        self.more_boutton=self.boutton("assets/SVG/more.svg",5,30)
 
+        self.more_boutton.setParent(self)  # On le place directement sur AudioPlayer
+        self.more_boutton.raise_()  # Le mettre au premier plan
+
+        self.speed_menu = QMenu()
+        self.speed_menu.addAction("0.5x", lambda: self.controller.set_playback_speed(0.5))
+        self.speed_menu.addAction("1.0x (Normal)", lambda: self.controller.set_playback_speed(1.0))
+        self.speed_menu.addAction("1.5x", lambda: self.controller.set_playback_speed(1.5))
+        self.speed_menu.addAction("2.0x", lambda: self.controller.set_playback_speed(2.0))
+
+        # 🔗 Connecte le bouton pour afficher le menu
+        self.more_boutton.setMenu(self.speed_menu)
 
         bottom_layout.addWidget(self.rewind_button)
         bottom_layout.addWidget(self.play_pause_button)

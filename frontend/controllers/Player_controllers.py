@@ -68,7 +68,9 @@ class PlayerController:
             new_pos = int(slider_value / 100 * self.duration)
             self.player.setPosition(new_pos)
 
-
+    def set_playback_speed(self, speed):
+        """Modifie la vitesse de lecture du player"""
+        self.player.setPlaybackRate(speed)
 
     def handle_media_status(self, status):
         """
