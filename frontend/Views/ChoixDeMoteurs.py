@@ -9,7 +9,7 @@ class ChoixDeMoteurs(QWidget):
     def __init__(self):
         super().__init__()
         self.controller = NavigationController()
-        print("ChoixDeMoteurs instancié !")
+
         self.resize(1117,768)
 
         #background de la page
@@ -41,12 +41,6 @@ class ChoixDeMoteurs(QWidget):
         self.creerBoutonValider()
         self.ajusterBtnSize()
         self.alignerWidgets()
-        print("Fin de l'initialisation de ChoixDeMoteurs")
-        
-
-        
-
-
 
     def choixTranscription(self):
         #sous forme d'un layout vertical

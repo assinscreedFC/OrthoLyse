@@ -16,6 +16,7 @@ from frontend.Views.ImporterAudio import ImporterAudio
 from frontend.Views.Menu import Menu
 from frontend.Views.ModeDeChargement import ModeDeChargement
 from frontend.controllers.Menu_controllers import NavigationController
+from frontend.Widgets.AudioPlayer import AudioPlayer
 
 
 # anis
@@ -54,7 +55,9 @@ class MyWindow(QMainWindow):
         self.settings = ChoixDeMoteurs()
         self.qStackwidget.addWidget(self.settings)
 
-        #information
+        #audioplayer
+        self.audioplayer = AudioPlayer()
+        self.qStackwidget.addWidget(self.audioplayer)
         # Importer audio
         self.importer_audio = ImporterAudio()
         self.qStackwidget.addWidget(self.importer_audio)
@@ -105,6 +108,9 @@ class MyWindow(QMainWindow):
         action_info = QAction("info", self)
         action_info.triggered.connect(self.show_infos)
         self.toolbar.addAction(action_info)
+
+        self.qStackwidget.setCurrentWidget(self.audioplayer)
+
 
     def show_home(self):
         """Afficher la page d'accueil"""
