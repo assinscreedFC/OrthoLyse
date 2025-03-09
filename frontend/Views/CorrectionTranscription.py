@@ -14,8 +14,10 @@ class CorrectionTranscription(QWidget):
         self.layout=QHBoxLayout(self)
         self.layout.setAlignment(Qt.AlignCenter)
         self.audio_player=AudioPlayer()
-        self.feuille=Feuille("./assets/SVG/icone_file_text.svg","Correction","Annuler","Valider","rgba(236, 252, 255, 0.85)")
+
+        self.feuille=Feuille("./assets/SVG/icone_file_text.svg","Correction","Valider","Annuler","rgba(236, 252, 255, 0.85)")
         self.feuille.setObjectName("feuille")
+        self.feuille.text_edit.setReadOnly(False)
        # self.feuille.setStyleSheet('QWidget#feuille{background-color: white; border-radius: 20px;border: 1px solid black}')
         self.layout.addWidget(self.audio_player)
         self.layout.setSpacing(10)
@@ -23,6 +25,8 @@ class CorrectionTranscription(QWidget):
 
 
         self.setLayout(self.layout)
+
+
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

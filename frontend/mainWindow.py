@@ -114,6 +114,9 @@ class MyWindow(QMainWindow):
         action_info.triggered.connect(self.show_infos)
         self.toolbar.addAction(action_info)
 
+        self.audio_player=AudioPlayer()
+        self.qStackwidget.addWidget(self.audio_player)
+
         self.qStackwidget.setCurrentWidget(self.correction_transcription)
 
 
