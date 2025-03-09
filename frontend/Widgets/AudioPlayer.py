@@ -128,7 +128,7 @@ class AudioPlayer(QWidget):
         # Bouton avance +10s
         self.forward_button = self.boutton("assets/SVG/forward-10.svg")
         #boutton 3 petit point
-        self.more_boutton=self.boutton("assets/SVG/more.svg",5,30)
+        self.more_boutton=self.boutton("assets/SVG/more.svg",4,30)
 
         self.more_boutton.setParent(self)  # On le place directement sur AudioPlayer
         self.more_boutton.raise_()  # Le mettre au premier plan
@@ -139,7 +139,7 @@ class AudioPlayer(QWidget):
         self.speed_menu.addAction("1.5x", lambda: self.controller.set_playback_speed(1.5))
         self.speed_menu.addAction("2.0x", lambda: self.controller.set_playback_speed(2.0))
 
-        # 🔗 Connecte le bouton pour afficher le menu
+        # Connecte le bouton pour afficher le menu
         self.more_boutton.setMenu(self.speed_menu)
 
         bottom_layout.addWidget(self.rewind_button)
