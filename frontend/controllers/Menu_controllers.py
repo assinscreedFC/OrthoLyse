@@ -28,7 +28,6 @@ class NavigationController:
         else:
             self.main_window.menu.show()
 
-
     def change_page(self, page_name):
         """Change la page dans QStackedWidget"""
         if self.central_widget:
@@ -44,6 +43,8 @@ class NavigationController:
                 self.central_widget.setCurrentWidget(self.main_window.settings)
             elif page_name == "Information":
                 self.central_widget.setCurrentWidget(self.main_window.information)
+            elif page_name == "Transcription":
+                self.central_widget.setCurrentWidget(self.main_window.transcription)
 
     def set_font(self,index):
         absolute_path = os.path.abspath(index)

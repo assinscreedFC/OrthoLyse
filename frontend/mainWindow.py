@@ -15,6 +15,7 @@ from frontend.Views.Informations import Informations
 from frontend.Views.ImporterAudio import ImporterAudio
 from frontend.Views.Menu import Menu
 from frontend.Views.ModeDeChargement import ModeDeChargement
+from frontend.Views.Transcription import Transcription
 from frontend.controllers.Menu_controllers import NavigationController
 from frontend.Widgets.AudioPlayer import AudioPlayer
 
@@ -56,8 +57,8 @@ class MyWindow(QMainWindow):
         self.qStackwidget.addWidget(self.settings)
 
         #audioplayer
-        self.audioplayer = AudioPlayer()
-        self.qStackwidget.addWidget(self.audioplayer)
+        self.transcription = Transcription()
+        self.qStackwidget.addWidget(self.transcription)
         # Importer audio
         self.importer_audio = ImporterAudio()
         self.qStackwidget.addWidget(self.importer_audio)
@@ -109,7 +110,7 @@ class MyWindow(QMainWindow):
         action_info.triggered.connect(self.show_infos)
         self.toolbar.addAction(action_info)
 
-        self.qStackwidget.setCurrentWidget(self.audioplayer)
+        self.qStackwidget.setCurrentWidget(self.transcription)
 
 
     def show_home(self):

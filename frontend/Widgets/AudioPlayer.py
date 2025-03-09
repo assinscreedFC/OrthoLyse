@@ -84,8 +84,6 @@ class AudioPlayer(QWidget):
         self.controller.left_time_label = self.left_time_label
         self.controller.right_time_label = self.right_time_label
 
-
-
     def boutton(self,file_path,sizeicone=3,sizebutton=40):
         button = QPushButton()
         button.setIcon(QIcon(file_path))
@@ -104,9 +102,6 @@ class AudioPlayer(QWidget):
 
                         """)
         return button
-
-
-
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
