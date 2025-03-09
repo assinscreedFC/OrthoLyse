@@ -15,6 +15,8 @@ class Transcription(QWidget):
         self.layout.setAlignment(Qt.AlignCenter)
         self.audio_player=AudioPlayer()
         self.feuille=Feuille()
+        self.feuille.setObjectName("feuille")
+       # self.feuille.setStyleSheet('QWidget#feuille{background-color: white; border-radius: 20px;border: 1px solid black}')
         self.layout.addWidget(self.audio_player)
         self.layout.setSpacing(10)
         self.layout.addWidget(self.feuille)
