@@ -6,7 +6,7 @@ from frontend.Widgets.Feuille import Feuille
 from frontend.controllers.Menu_controllers import NavigationController
 
 
-class Transcription(QWidget):
+class CorrectionTranscription(QWidget):
     def __init__(self):
         super().__init__()
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -14,7 +14,7 @@ class Transcription(QWidget):
         self.layout=QHBoxLayout(self)
         self.layout.setAlignment(Qt.AlignCenter)
         self.audio_player=AudioPlayer()
-        self.feuille=Feuille("./assets/SVG/icone_file_text.svg","Transcription","Transcrire","Coriger","rgba(245, 245, 245, 0.85)")
+        self.feuille=Feuille("./assets/SVG/icone_file_text.svg","Correction","Annuler","Valider","rgba(236, 252, 255, 0.85)")
         self.feuille.setObjectName("feuille")
        # self.feuille.setStyleSheet('QWidget#feuille{background-color: white; border-radius: 20px;border: 1px solid black}')
         self.layout.addWidget(self.audio_player)

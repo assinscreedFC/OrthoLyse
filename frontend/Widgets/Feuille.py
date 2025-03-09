@@ -9,23 +9,29 @@ from frontend.controllers.Menu_controllers import NavigationController
 
 
 class Feuille(QWidget):
-    def __init__(self,icone=None,text_top=None):
+    def __init__(self,icone="./assets/SVG/icone_file_text.svg",text_top="Transcrire",left_button_text="Transcrire",right_butto_text="Coriger",bg_color="rgba(245, 245, 245, 0.85)"):
         super().__init__()
+        self.icone=icone
+        self.text_top=text_top
+        self.left_button_text=left_button_text
+        self.right_butto_text=right_butto_text
+        self.bg_color=bg_color
         self.controller=NavigationController()
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        self.setFixedSize((self.width()//2), self.height()*0.80)
+        self.setFixedSize((self.width() // 2), self.height() * 0.80)
+
         self.font,self.font_family=self.controller.set_font('./assets/Fonts/Inter,Montserrat,Roboto/Inter/Inter-VariableFont_opsz,wght.ttf')
         self.inner_widget()
 
     def inner_widget(self):
         self.widget=QWidget(self)
         self.widget.setFixedSize(self.width(),self.height())
-        self.widget.setStyleSheet("""
-            #feuille {
-                background-color: rgba(245, 245, 245, 0.85);
+        self.widget.setStyleSheet(f"""
+            #feuille {{
+                background-color: {self.bg_color};
                 border-radius: 20px;
-                border: 1px solid #7B7C7C;
-            }
+                border: 2px solid #15B5D4;
+            }}
         """)
         self.widget.setObjectName("feuille")
         self.widget.setAutoFillBackground(True)
@@ -48,11 +54,11 @@ class Feuille(QWidget):
 
         self.icon_label = QLabel()
         # Remplace par ton icône, ex: "assets/transcription_icon.png"
-        pix = QPixmap("./assets/SVG/icone_file_text.svg").scaled(18, 24, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        pix = QPixmap(self.icone).scaled(18, 24, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.icon_label.setPixmap(pix)
 
         # Titre
-        self.title_label = QLabel("Transcription…")
+        self.title_label = QLabel(self.text_top)
         self.title_label.setStyleSheet("color: #4C4C4C;")
         self.title_label.setFont(QFont(self.font_family, 14))
         label_layout = QHBoxLayout()
@@ -63,7 +69,7 @@ class Feuille(QWidget):
         self.main_layout.addLayout(label_layout)
 
     def body(self):
-        self.text_edit = QPlainTextEdit("helloooooooooooooooooo")
+        self.text_edit = QPlainTextEdit(text)
         self.text_edit.setReadOnly(True)
         self.text_edit.setFont(QFont(self.font_family,10))
 
@@ -72,8 +78,8 @@ class Feuille(QWidget):
         self.main_layout.addWidget(self.text_edit)
 
     def bottom(self):
-        self.right_boutton=self.boutton(self.widget,"Annuler","#15B5D4","#15B5D4","#FFFFFF")
-        self.left_boutton=self.boutton( self.widget,"transcrire","#FFFFFF","#15B5D4","#15B5D4")
+        self.right_boutton=self.boutton(self.widget,self.right_butto_text,"#15B5D4","#15B5D4","#FFFFFF")
+        self.left_boutton=self.boutton( self.widget,self.left_button_text,"#FFFFFF","#15B5D4","#15B5D4")
 
         label_layout = QHBoxLayout()
         label_layout.addStretch(1)
@@ -115,3 +121,19 @@ class Feuille(QWidget):
         layout.setSpacing(0)
 
         return boutton_init
+
+
+text="""l'anis
+    Lors d’une 105 belle 2024 matinée 2.5 d’été, le soleil brillait haut dans le ciel. Marie, une jeune femme curieuse et passionnée, décidait de partir explorer la forêt qui se trouvait près de chez elle. « Pourquoi ne pas profiter de cette journée ? », pensa-t-elle en préparant son sac à dos.
+
+Elle emporta quelques indispensables : une bouteille d’eau, des fruits, un carnet, et un stylo. Après tout, qui sait quelles idées pourraient lui venir en tête ? Ses pas, rythmés par le chant des oiseaux, la conduisirent bientôt au cœur de la forêt. Là-bas, tout semblait si paisible... mais aussi mystérieux.
+
+« Est-ce que quelqu’un a déjà visité cet endroit avant moi ? », se demanda-t-elle. Elle remarqua alors un sentier légèrement dissimulé par des buissons. Sans hésitation, elle décida de le suivre. Peu à peu, les arbres devenaient plus grands, l’ombre plus dense, et l’air empli d’une fraîcheur inattendue. Pourtant, elle ne se sentait pas seule... Était-ce son imagination ?
+
+Soudain, un craquement se fit entendre ! Marie s’arrêta net. Était-ce un animal ? Ou pire, une personne ? Le cœur battant, elle regarda autour d’elle : rien en vue. Mais au sol, elle vit des empreintes. « Qui ou quoi peut bien être passé par là ? », murmura-t-elle, tout en notant ses observations dans son carnet.
+
+Continuant son chemin, elle arriva finalement dans une clairière. Là, au centre, se trouvait une vieille cabane. Les murs étaient recouverts de mousse, et la porte, entrouverte, grinçait doucement. Marie hésita : devait-elle entrer ou faire demi-tour ?
+
+Sa curiosité prit le dessus. Elle poussa doucement la porte – creeeeeek. À l’intérieur, elle découvrit une pièce remplie d’objets anciens : une lampe à huile, un livre poussiéreux, et une boîte mystérieuse. Alors qu’elle tendait la main pour ouvrir la boîte... un bruit derrière elle la fit sursauter !
+
+"""

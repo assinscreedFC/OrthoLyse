@@ -9,6 +9,7 @@ from PySide6.QtGui import QImage, QPalette, QBrush, QPainter, QPixmap
 from PySide6.QtCore import Qt, QBuffer, QByteArray
 from Widgets.Header import Header
 from Widgets.NavBar import NavBar
+from frontend.Views.CorrectionTranscription import CorrectionTranscription
 from frontend.Views.Home import Home
 from frontend.Views.ChoixDeMoteurs import ChoixDeMoteurs
 from frontend.Views.Informations import Informations
@@ -55,6 +56,9 @@ class MyWindow(QMainWindow):
         # settings choix moteur
         self.settings = ChoixDeMoteurs()
         self.qStackwidget.addWidget(self.settings)
+
+        self.correction_transcription = CorrectionTranscription()
+        self.qStackwidget.addWidget(self.correction_transcription)
 
         #audioplayer
         self.transcription = Transcription()
@@ -110,7 +114,7 @@ class MyWindow(QMainWindow):
         action_info.triggered.connect(self.show_infos)
         self.toolbar.addAction(action_info)
 
-        self.qStackwidget.setCurrentWidget(self.transcription)
+        self.qStackwidget.setCurrentWidget(self.correction_transcription)
 
 
     def show_home(self):
