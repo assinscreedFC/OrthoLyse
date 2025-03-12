@@ -1,6 +1,16 @@
 from PySide6.QtGui import QIcon, QAction
-from PySide6.QtWidgets import QMainWindow, QPushButton, QApplication, QWidget, QLabel, QVBoxLayout, \
-    QSizePolicy, QHBoxLayout, QToolBar, QStackedWidget
+from PySide6.QtWidgets import (
+    QMainWindow,
+    QPushButton,
+    QApplication,
+    QWidget,
+    QLabel,
+    QVBoxLayout,
+    QSizePolicy,
+    QHBoxLayout,
+    QToolBar,
+    QStackedWidget,
+)
 import sys
 import os
 from PySide6.QtWidgets import QApplication
@@ -9,16 +19,15 @@ from PySide6.QtGui import QImage, QPalette, QBrush, QPainter, QPixmap
 from PySide6.QtCore import Qt, QBuffer, QByteArray
 from Widgets.Header import Header
 from Widgets.NavBar import NavBar
-from frontend.Views.CorrectionTranscription import CorrectionTranscription
 from frontend.Views.Home import Home
 from frontend.Views.ChoixDeMoteurs import ChoixDeMoteurs
 from frontend.Views.Informations import Informations
 from frontend.Views.ImporterAudio import ImporterAudio
 from frontend.Views.Menu import Menu
 from frontend.Views.ModeDeChargement import ModeDeChargement
-from frontend.Views.Transcription import Transcription
 from frontend.controllers.Menu_controllers import NavigationController
-from frontend.Widgets.AudioPlayer import AudioPlayer
+from frontend.Views.Transcription import Transcription
+from frontend.Views.CorrectionTranscription import CorrectionTranscription
 
 
 # anis
@@ -49,6 +58,12 @@ class MyWindow(QMainWindow):
         self.mode_de_chargement = ModeDeChargement()
         self.qStackwidget.addWidget(self.mode_de_chargement)
 
+        self.correction_transcription = CorrectionTranscription()
+        self.qStackwidget.addWidget(self.correction_transcription)
+
+        #audioplayer
+        self.transcription = Transcription()
+        self.qStackwidget.addWidget(self.transcription)
         # info
         self.information = Informations()
         self.qStackwidget.addWidget(self.information)
@@ -57,12 +72,7 @@ class MyWindow(QMainWindow):
         self.settings = ChoixDeMoteurs()
         self.qStackwidget.addWidget(self.settings)
 
-        self.correction_transcription = CorrectionTranscription()
-        self.qStackwidget.addWidget(self.correction_transcription)
-
-        #audioplayer
-        self.transcription = Transcription()
-        self.qStackwidget.addWidget(self.transcription)
+        # information
         # Importer audio
         self.importer_audio = ImporterAudio()
         self.qStackwidget.addWidget(self.importer_audio)
@@ -90,7 +100,9 @@ class MyWindow(QMainWindow):
         self.toolbar = QToolBar("Menu")
         self.toolbar.setMovable(False)  # Interdit de dÃ©placer la toolbar
         self.addToolBar(Qt.TopToolBarArea, self.toolbar)
-        self.toolbar.setStyleSheet("background-color: rgba(0, 0, 0, 1);")  # Rendre la toolbar semi-transparente
+        self.toolbar.setStyleSheet(
+            "background-color: rgba(0, 0, 0, 1);"
+        )  # Rendre la toolbar semi-transparente
 
         # Ajouter des actions Ã  la toolbar
         action_home = QAction("Accueil", self)
@@ -114,11 +126,11 @@ class MyWindow(QMainWindow):
         action_info.triggered.connect(self.show_infos)
         self.toolbar.addAction(action_info)
 
-        self.audio_player=AudioPlayer()
-        self.qStackwidget.addWidget(self.audio_player)
+        action_enregistrer = QAction("enregistrer", self)
+        action_enregistrer.triggered.connect(self.show_enregistrer)
+        self.toolbar.addAction(action_enregistrer)
 
-        self.qStackwidget.setCurrentWidget(self.correction_transcription)
-
+        self.qStackwidget.setCurrentWidget(self.transcription)  #!!!! a suprimer a la fin
 
     def show_home(self):
         """Afficher la page d'accueil"""
@@ -139,9 +151,15 @@ class MyWindow(QMainWindow):
         """Afficher le menu principal not used"""
         self.qStackwidget.setCurrentWidget(self.importer_audio)
 
+    def show_enregistrer(self):
+        """Afficher le menu d'enregistrement"""
+        self.qStackwidget.setCurrentWidget(self.enregistrer)
+
     def ajuster_image(self):
         # Redimensionner l'image pour s'adapter Ã  la fenÃªtre
-        pixmap_redimensionne = self.pixmap.scaled(self.size(), Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+        pixmap_redimensionne = self.pixmap.scaled(
+            self.size(), Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation
+        )
         self.label_fond.setPixmap(pixmap_redimensionne)
         self.label_fond.setGeometry(0, 0, self.width(), self.height())
 
@@ -156,7 +174,9 @@ class MyWindow(QMainWindow):
 def load_all_stylesheets(directory):
     """Charge et concatÃ¨ne tous les fichiers QSS d'un dossier."""
     styles = ""
-    for filename in sorted(os.listdir(directory)):  # Trier les fichiers pour un chargement structurÃ©
+    for filename in sorted(
+        os.listdir(directory)
+    ):  # Trier les fichiers pour un chargement structurÃ©
         if filename.endswith(".qss"):
             with open(os.path.join(directory, filename), "r") as file:
                 styles += file.read() + "\n"

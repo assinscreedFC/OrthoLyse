@@ -36,17 +36,19 @@ class NavigationController:
             elif page_name == "Menu":
                 self.central_widget.setCurrentWidget(self.main_window.menu)
             elif page_name == "ModeDeChargement":
-                self.central_widget.setCurrentWidget(self.main_window.mode_de_chargement)
+                self.central_widget.setCurrentWidget(
+                    self.main_window.mode_de_chargement
+                )
             elif page_name == "ImporterAudio":
                 self.central_widget.setCurrentWidget(self.main_window.importer_audio)
             elif page_name == "Settings":
                 self.central_widget.setCurrentWidget(self.main_window.settings)
             elif page_name == "Information":
                 self.central_widget.setCurrentWidget(self.main_window.information)
-            elif page_name == "Transcription":
-                self.central_widget.setCurrentWidget(self.main_window.transcription)
+            elif page_name == "Enregistrer":
+                self.central_widget.setCurrentWidget(self.main_window.enregistrer)
 
-    def set_font(self,index):
+    def set_font(self, index):
         absolute_path = os.path.abspath(index)
         font_id = QFontDatabase.addApplicationFont(absolute_path)
         if font_id == -1:
@@ -56,5 +58,5 @@ class NavigationController:
             font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
             font = QFont(font_family, 14)  # 14 = Taille de la police
 
-        return font,font_family
-            # Ajouter d'autres conditions pour d'autres pages si nÃ©cessaire
+        return font, font_family
+        # Ajouter d'autres conditions pour d'autres pages si nÃ©cessaire

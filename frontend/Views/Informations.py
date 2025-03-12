@@ -1,5 +1,5 @@
 import sys
-from PySide6.QtWidgets import QApplication, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QFrame
+from PySide6.QtWidgets import QApplication, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QFrame,QSizePolicy
 from PySide6.QtGui import QPixmap, QFont, QPainter, QBrush, QPen, QColor
 from PySide6.QtCore import Qt
 
@@ -10,7 +10,7 @@ class Informations(QWidget):
         super().__init__()
         # les dimensions de la fenetre
         self.resize(1117, 768)
-        self.setStyleSheet(("color:black;"))
+        self.setStyleSheet(("color :black;"))
         self.creerFond()
         self.creerImage()
         self.creerTexte()
@@ -50,46 +50,39 @@ class Informations(QWidget):
 
     def creerTexte(self):
         # créer le texte de présentation
-        # text1
         self.text1 = QLabel("<b>Gagnez du temps et optimisez vos analyses !</b>")
-        self.text1.setStyleSheet(""" QLabel{
-                                 font-family:georgia;
-                                 font-size:20px;
-                                 }""")
-        self.text1.setMinimumSize(900, 114)
-        self.text1.setWordWrap(True)
-
-        # text2
         self.text2 = QLabel(
             "<b> OrthoLyse vous aide à transcrire et analyser les productions langagières de vos patients en un clic.</b>")
-        self.text2.setStyleSheet(""" QLabel{
-                                 font-family:georgia;
-                                 font-size:20px;
-                                 }""")
-        self.text2.setMinimumSize(900, 114)
-        self.text2.setWordWrap(True)
-
-        # text3
         self.text3 = QLabel(
             "<b>Grâce à des outils intuitifs et des statistiques détaillées, évaluez facilement la complexité syntaxique et concentrez-vous sur l’essentiel : l’accompagnement thérapeutique.</b>")
-        self.text3.setStyleSheet(""" QLabel{
-                                 font-family:georgia;
-                                 font-size:20px;
-                                 }""")
-        self.text3.setMinimumSize(900, 114)
-        self.text3.setWordWrap(True)
+
+        # appliquer le style sur les textes
+        self.appliquerStyleTexte(self.text1,20)
+        self.appliquerStyleTexte(self.text2,20)
+        self.appliquerStyleTexte(self.text3,20)
+
+    def appliquerStyleTexte(self,widget, taille):
+        widget.setStyleSheet(f"font-family: georgia; font-size: {taille}px;")
+
+        widget.setMinimumWidth(self.width()*0.66)  # Permet au QLabel de se réduire au besoin
+        widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        widget.setWordWrap(True)
+
+
+
 
     def alignerElementsH1(self):
         # aligner le texte verticalement
         self.textLayout = QVBoxLayout()
         self.textLayout.setAlignment(Qt.AlignLeft)
-        self.textLayout.addStretch(5)
+
+        self.textLayout.addStretch(1)
         self.textLayout.addWidget(self.text1)
         self.textLayout.addStretch(1)
         self.textLayout.addWidget(self.text2)
         self.textLayout.addStretch(1)
         self.textLayout.addWidget(self.text3)
-        self.textLayout.addStretch(9)
+        self.textLayout.addStretch(2)
 
         # ajouter l'image au layout horizontal
         self.image_texteLayout.addStretch(1)
@@ -97,47 +90,48 @@ class Informations(QWidget):
         # ajouter le texte au layout horizontal
         self.image_texteLayout.addStretch(4)
         self.image_texteLayout.addLayout(self.textLayout)
-        self.image_texteLayout.addStretch(8)
+        self.image_texteLayout.addStretch(1)
+
+    def creerChiffreEtape(self,texte, couleur="#9cd3da", taille=20):
+        label = QLabel(f"<b>{texte}</b>")
+        label.setStyleSheet(f"color: {couleur}; font-size: {taille}px;")
+        label.setAlignment(Qt.AlignCenter)
+        return label
+
+    def creerTexteEtape(self,texte, couleur="#7b7c7c", taille=40):
+        label = QLabel(f"<b>{texte}</b>")
+        label.setStyleSheet(f"color: {couleur}; font-size: {taille}px;font-family:georgia;")
+        label.setAlignment(Qt.AlignCenter)
+        label.setWordWrap(True)
+        return label
+
+    def creerSeparateur(self,couleur="#9cd3da"):
+        line=QFrame()
+        line.setFrameShape(QFrame.VLine)
+        line.setStyleSheet(f"border: 3px dashed {couleur};")
+        return line
+
 
     def creerEtapes(self):
         # texte associé aux etapes
+        self.text_etapes=self.creerTexteEtape("<b><u>Comment ça marche ?</u></b>","#7b7c7c",40)
 
-        self.text_etapes = QLabel("<b><u>Comment ça marche ?</u></b>")
-        self.text_etapes.setStyleSheet("color: #7b7c7c; font-size:40px; font-family:georgia;")
-        self.text_etapes.setAlignment(Qt.AlignCenter)
+        #creer les chiffres des etapes
+        self.chiffre1=self.creerChiffreEtape("<b>(1)</b>","#9cd3da",20)
+        self.chiffre2 = self.creerChiffreEtape("<b>(2)</b>","#9cd3da",20)
+        self.chiffre3 = self.creerChiffreEtape("<b>(3)</b>","#9cd3da",20)
 
-        # lignes de séparation entre les étapes
-        self.line1 = QFrame()
-        self.line1.setFrameShape(QFrame.VLine)
-        self.line1.setStyleSheet("border: 3px dashed #9cd3da")
+        #creer les textes des etapes
+        self.text_etape1= self.creerTexteEtape("Importez ou enregistrez un fichier audio.","#9cd3da", 40)
+        self.text_etape2=self.creerTexteEtape("Corrigez et validez la transcription.","#9cd3da", 40)
+        self.text_etape3 = self.creerTexteEtape("Analysez la transcription et exportez les résultats.", "#9cd3da", 40)
 
-        self.line2 = QFrame()
-        self.line2.setFrameShape(QFrame.VLine)
-        self.line2.setStyleSheet("border: 3px dashed #9cd3da")
+        #creer les lignes
+        self.line1=self.creerSeparateur("#9cd3da")
+        self.line2=self.creerSeparateur("#9cd3da")
 
-        self.chiffre1 = QLabel("<b>(1)</b>")
-        self.chiffre1.setStyleSheet("color:#9cd3da ; font-size:20px")
-        self.chiffre1.setAlignment(Qt.AlignCenter)
-        self.text_etape1 = QLabel("Importez ou enregistrez un fichier audio.")
-        self.text_etape1.setStyleSheet("font-size:20px;font-family:georgia;")
-        self.text_etape1.setAlignment(Qt.AlignCenter)
-        self.text_etape1.setWordWrap(True)
 
-        self.chiffre2 = QLabel("<b>(2)</b>")
-        self.chiffre2.setStyleSheet("color:#9cd3da ; font-size:20px")
-        self.chiffre2.setAlignment(Qt.AlignCenter)
-        self.text_etape2 = QLabel("Corrigez et validez la transcription.")
-        self.text_etape2.setStyleSheet("font-size:20px;font-family:georgia;")
-        self.text_etape2.setAlignment(Qt.AlignCenter)
-        self.text_etape2.setWordWrap(True)
 
-        self.chiffre3 = QLabel("<b>(3)</b>")
-        self.chiffre3.setStyleSheet("color:#9cd3da ; font-size:20px")
-        self.chiffre3.setAlignment(Qt.AlignCenter)
-        self.text_etape3 = QLabel("Analysez la transcription et exportez les résultats.")
-        self.text_etape3.setStyleSheet("font-size:20px; font-family:georgia;")
-        self.text_etape3.setAlignment(Qt.AlignCenter)
-        self.text_etape3.setWordWrap(True)
 
     def alignerElementsH2(self):
         # organiser chaque etape dans un layout vertical puis tout mettre dans un layout horizontal
@@ -194,12 +188,12 @@ class Informations(QWidget):
         # ajouter le layout horizontal de l image+texte au layout principal
         self.mainLayout.addStretch(0)
         self.mainLayout.addLayout(self.image_texteLayout)
-        self.mainLayout.addStretch(1)
+
         # ajouter le texte "comment ça marche" au layout principal
         self.mainLayout.addWidget(self.text_etapes)
-        self.mainLayout.addStretch(1)
+        self.mainLayout.addStretch(0)
         self.mainLayout.addLayout(self.etapes)
-        self.mainLayout.addStretch(1)
+        self.mainLayout.addStretch(0)
         # definir le layout principal comme layout de la page
         self.setLayout(self.mainLayout)
 
@@ -226,15 +220,18 @@ class Informations(QWidget):
 
         # Adapter la taille du texte
         new_font_size = max(12, int(20 * scale_factor))  # Empêcher une taille trop petite
-        self.text1.setStyleSheet(f"font-family: georgia; font-size: {new_font_size}px;")
-        self.text2.setStyleSheet(f"font-family: georgia; font-size: {new_font_size}px;")
-        self.text3.setStyleSheet(f"font-family: georgia; font-size: {new_font_size}px;")
+        for widget in [self.text1, self.text2, self.text3]:
+            self.appliquerStyleTexte(widget,new_font_size)
+
+
 
         # Adapter la taille des textes des étapes
-        etape_font_size = max(12, int(20 * scale_factor))
-        self.text_etape1.setStyleSheet(f"font-size: {etape_font_size}px; font-family: georgia;")
-        self.text_etape2.setStyleSheet(f"font-size: {etape_font_size}px; font-family: georgia;")
-        self.text_etape3.setStyleSheet(f"font-size: {etape_font_size}px; font-family: georgia;")
+
+        self.text_etape1.setStyleSheet(f"font-size: {new_font_size}px; font-family: georgia;")
+        self.text_etape2.setStyleSheet(f"font-size: {new_font_size}px; font-family: georgia;")
+        self.text_etape3.setStyleSheet(f"font-size: {new_font_size}px; font-family: georgia;")
+
+
 
         # Adapter la taille du titre "Comment ça marche ?"
         titre_font_size = max(20, int(40 * scale_factor))

@@ -44,6 +44,7 @@ class Header(QWidget):
 
 
     def change_page(self):
+        print("bghello")
         self.controller.toggle_menu()
 
     def resizeEvent(self, event):
