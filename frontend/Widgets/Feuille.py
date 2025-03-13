@@ -5,18 +5,19 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon, QFont, QPalette, QColor, QPixmap
-from frontend.controllers.Menu_controllers import NavigationController
 
 
 class Feuille(QWidget):
-    def __init__(self,icone="./assets/SVG/icone_file_text.svg",text_top="Transcrire",left_button_text="Transcrire",right_butto_text="Coriger",bg_color="rgba(245, 245, 245, 0.85)"):
+    def __init__(self,icone="./assets/SVG/icone_file_text.svg",text_top="Transcrire",left_button_text="Transcrire",right_butto_text="Coriger",bg_color="rgba(245, 245, 245, 0.85)",plain_text=""):
         super().__init__()
         self.icone=icone
         self.text_top=text_top
         self.left_button_text=left_button_text
         self.right_butto_text=right_butto_text
         self.bg_color=bg_color
-        self.controller=NavigationController()
+        from frontend.controllers.Menu_controllers import NavigationController
+        self.controller = NavigationController()
+        self.plain_text=plain_text
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.setFixedSize((self.width() // 2), self.height() * 0.80)
 
@@ -69,7 +70,12 @@ class Feuille(QWidget):
         self.main_layout.addLayout(label_layout)
 
     def body(self):
-        self.text_edit = QPlainTextEdit(text)
+        if self.controller.get_text_transcription() is not None:
+            self.text_edit = QPlainTextEdit(self.controller.get_text_transcription())
+        else:
+            self.text_edit = QPlainTextEdit("")
+
+
         self.text_edit.setReadOnly(True)
         self.text_edit.setFont(QFont(self.font_family,10))
 
@@ -81,6 +87,14 @@ class Feuille(QWidget):
         self.right_boutton=self.boutton(self.widget,self.right_butto_text,"#15B5D4","#15B5D4","#FFFFFF")
         self.left_boutton=self.boutton( self.widget,self.left_button_text,"#FFFFFF","#15B5D4","#15B5D4")
 
+        if self.right_butto_text=="Coriger":
+            self.right_boutton.clicked.connect(lambda :self.controller.change_page("CTanscription"))
+        elif self.right_butto_text=="Transcrire":
+            self.right_boutton.clicked.connect(lambda :self.controller.change_page("Transcription"))
+
+        if self.left_button_text=="Valider":
+            self.controller.set_text_transcription(self.text_edit.toPlainText())
+            self.left_boutton.clicked.connect(lambda :self.controller.change_page("Transcription"))
         label_layout = QHBoxLayout()
         label_layout.addStretch(1)
         label_layout.addWidget(self.right_boutton)

@@ -1,40 +1,55 @@
 import sys
-from PySide6.QtWidgets import QApplication, QLabel, QPushButton,QWidget,QVBoxLayout, QHBoxLayout, QFrame,QSizePolicy,QSpacerItem
-from PySide6.QtGui import QPixmap,QIcon
+from PySide6.QtWidgets import (
+    QApplication,
+    QLabel,
+    QPushButton,
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QFrame,
+    QSizePolicy,
+    QSpacerItem,
+)
+from PySide6.QtGui import QPixmap, QIcon
 from PySide6.QtCore import Qt
 
 from frontend.controllers.Menu_controllers import NavigationController
 
+
 class ChoixDeMoteurs(QWidget):
     def __init__(self):
         super().__init__()
+        self.resize(1117, 768)
         self.controller = NavigationController()
-
-        self.resize(1117,768)
-
-        #background de la page
-        self.background=QLabel(self)
-        self.background.setPixmap(QPixmap("./assets/image/background3.jpg").scaled(self.size(), Qt.KeepAspectRatioByExpanding,Qt.SmoothTransformation))
+        # background de la page
+        self.background = QLabel(self)
+        self.background.setPixmap(
+            QPixmap("assets/background3.jpg").scaled(
+                self.size(), Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation
+            )
+        )
         self.background.setScaledContents(True)
-        self.background.setGeometry(0,0,self.width(),self.height())
-        self.setStyleSheet("""
+        self.background.setGeometry(0, 0, self.width(), self.height())
+        self.setStyleSheet(
+            """
         QPushButton{
             color:white;
             font-family:georgia;
             font-size:30px;
             background-color: rgba(255, 255, 255, 0.01);
             border-radius: 30px;
-            
+
             border: 3px solid white;
             padding: 10px;
-           
-            
+
+
         }
         QPushButton::hover{
                            background-color:#c5c5c5;
                            }
-        """)
-        
+        """
+        )
+
         self.choixTranscription()
         self.separateur()
         self.choixAnalyse()
@@ -68,6 +83,7 @@ class ChoixDeMoteurs(QWidget):
             self.helpIcone.sizeHint()
         )  # Ajuste la taille de l'icône au bouton
         self.helpIcone.setStyleSheet("border: none;")
+        self.helpIcone.clicked.connect(self.view_help)
 
         # aligner le texte et l'icone horizontalement
 
@@ -90,8 +106,7 @@ class ChoixDeMoteurs(QWidget):
         self.transcriptionVLayout.addStretch(3)
         self.transcriptionVLayout.addLayout(self.textIconHLayout)
         self.transcriptionVLayout.addStretch(10)
-        # self.transcriptionVLayout.addWidget(self.btnTiny,alignment=Qt.AlignCenter)
-        # self.transcriptionVLayout.addStretch(1)
+
         self.transcriptionVLayout.addWidget(self.btnBase, alignment=Qt.AlignCenter)
         self.transcriptionVLayout.addStretch(1)
         self.transcriptionVLayout.addWidget(self.btnSmall, alignment=Qt.AlignCenter)
@@ -100,6 +115,9 @@ class ChoixDeMoteurs(QWidget):
         self.transcriptionVLayout.addStretch(1)
         self.transcriptionVLayout.addWidget(self.btnLarge, alignment=Qt.AlignCenter)
         self.transcriptionVLayout.addStretch(10)
+
+    def view_help(self):
+        self.controller.change_page("Help")
 
     def separateur(self):
         self.line = QFrame()
@@ -167,7 +185,7 @@ class ChoixDeMoteurs(QWidget):
         for btn in buttons:
             btn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
             btn.setMaximumSize(210, 60)
-            btn.setMinimumSize(self.width() * 0.1, 60)
+            btn.setMinimumSize(self.width() * 0.12, 60)
             self.text1.setMinimumWidth(self.width() * 0.35)
             self.text2.setMinimumWidth(self.width() * 0.35)
             self.text1.setMaximumWidth(self.width() * 0.6)

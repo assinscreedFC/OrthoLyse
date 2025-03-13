@@ -3,6 +3,9 @@ import sys
 
 from PySide6.QtGui import QFontDatabase, QFont
 
+from frontend.Views.CorrectionTranscription import CorrectionTranscription
+from frontend.Views.Transcription import Transcription
+
 
 class NavigationController:
     """ContrÃ´leur global pour gÃ©rer la navigation"""
@@ -14,6 +17,11 @@ class NavigationController:
             cls._instance = super(NavigationController, cls).__new__(cls)
             cls._instance.main_window = None  # RÃ©fÃ©rence Ã  MainWindow
             cls._instance.central_widget = None  # RÃ©fÃ©rence au QStackedWidget
+            cls._instance.file_transcription_path = None  # RÃ©fÃ©rence au QStackedWidget
+            cls._instance.text_transcription = None  # RÃ©fÃ©rence au QStackedWidget
+
+
+
         return cls._instance
 
     def set_main_window(self, main_window, central_widget):
@@ -47,6 +55,45 @@ class NavigationController:
                 self.central_widget.setCurrentWidget(self.main_window.information)
             elif page_name == "Enregistrer":
                 self.central_widget.setCurrentWidget(self.main_window.enregistrer)
+            elif page_name == "Help":
+                self.central_widget.setCurrentWidget(self.main_window.help)
+            elif page_name == "Enregistrer":
+                self.central_widget.setCurrentWidget(self.main_window.enregistrer)
+            elif page_name == "Transcription":
+                # Vérifier si la page existe déjà
+                if hasattr(self.main_window,
+                           "transcription") and self.main_window.transcription in self.main_window.qStackwidget.children():
+                    self.main_window.qStackwidget.removeWidget(self.main_window.transcription)
+                    self.main_window.transcription.deleteLater()  # Libérer la mémoire
+
+                # Créer une nouvelle instance
+                self.main_window.transcription = Transcription()
+                self.main_window.qStackwidget.addWidget(self.main_window.transcription)
+                self.central_widget.setCurrentWidget(self.main_window.transcription)
+
+            elif page_name == "CTanscription":
+                # Vérifier si la page existe déjà
+                if hasattr(self.main_window,
+                           "correction_tanscription") and self.main_window.correction_tanscription in self.main_window.qStackwidget.children():
+                    self.main_window.qStackwidget.removeWidget(self.main_window.correction_tanscription)
+                    self.main_window.correction_tanscription.deleteLater()  # Libérer la mémoire
+
+                # Créer une nouvelle instance
+                self.main_window.correction_tanscription = CorrectionTranscription()
+                self.main_window.qStackwidget.addWidget(self.main_window.correction_tanscription)
+                self.central_widget.setCurrentWidget(self.main_window.correction_tanscription)
+
+    def set_file_transcription_path(self, file_path):
+        self.file_transcription_path = file_path
+
+    def get_file_transcription_path(self):
+        return self.file_transcription_path
+
+    def set_text_transcription(self, text):
+        self.text_transcription = text
+
+    def get_text_transcription(self):
+        return self.text_transcription
 
     def set_font(self, index):
         absolute_path = os.path.abspath(index)

@@ -12,13 +12,14 @@ from frontend.Widgets.HoverSlider import HoverSlider
 
 
 class AudioPlayer(QWidget):
-    def __init__(self):
+    def __init__(self,path=None):
         super().__init__()
+        self.path=path
         self.setFixedSize((642 // 2) - 40, 100)
         self.font, self.font_family = self.set_font(
             "./assets/Fonts/Inter,Montserrat,Roboto/Inter/static/Inter_24pt-SemiBold.ttf")
         self.inner_widgets()
-        self.init_player("D:/disc E/vscode pyhton/python/upc projet test/audio.wav")
+        self.init_player(self.path)
         #self.slots()
 
     def init_player(self, file_path):

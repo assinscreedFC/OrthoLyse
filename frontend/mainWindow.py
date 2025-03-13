@@ -19,15 +19,16 @@ from PySide6.QtGui import QImage, QPalette, QBrush, QPainter, QPixmap
 from PySide6.QtCore import Qt, QBuffer, QByteArray
 from Widgets.Header import Header
 from Widgets.NavBar import NavBar
+from frontend.Views.HelpTranscription import HelpTranscription
 from frontend.Views.Home import Home
 from frontend.Views.ChoixDeMoteurs import ChoixDeMoteurs
 from frontend.Views.Informations import Informations
 from frontend.Views.ImporterAudio import ImporterAudio
 from frontend.Views.Menu import Menu
 from frontend.Views.ModeDeChargement import ModeDeChargement
+from frontend.Views.HelpTranscription import HelpTranscription
+from frontend.Views.eregistrement import Enregistrement
 from frontend.controllers.Menu_controllers import NavigationController
-from frontend.Views.Transcription import Transcription
-from frontend.Views.CorrectionTranscription import CorrectionTranscription
 
 
 # anis
@@ -58,12 +59,12 @@ class MyWindow(QMainWindow):
         self.mode_de_chargement = ModeDeChargement()
         self.qStackwidget.addWidget(self.mode_de_chargement)
 
-        self.correction_transcription = CorrectionTranscription()
-        self.qStackwidget.addWidget(self.correction_transcription)
+        #self.correction_transcription = CorrectionTranscription()
+        #self.qStackwidget.addWidget(self.correction_transcription)
 
-        #audioplayer
-        self.transcription = Transcription()
-        self.qStackwidget.addWidget(self.transcription)
+        # audioplayer
+        #self.transcription = Transcription()
+        #self.qStackwidget.addWidget(self.transcription)
         # info
         self.information = Informations()
         self.qStackwidget.addWidget(self.information)
@@ -72,10 +73,17 @@ class MyWindow(QMainWindow):
         self.settings = ChoixDeMoteurs()
         self.qStackwidget.addWidget(self.settings)
 
-        # information
         # Importer audio
         self.importer_audio = ImporterAudio()
         self.qStackwidget.addWidget(self.importer_audio)
+
+        # help pour le choix du modele de transcription
+        self.help = HelpTranscription()
+        self.qStackwidget.addWidget(self.help)
+
+        # faire un enregistrement
+        self.enregistrer = Enregistrement()
+        self.qStackwidget.addWidget(self.enregistrer)
 
         # CrÃ©er un QLabel pour afficher l'image de fond
         self.label_fond = QLabel(self)
@@ -126,11 +134,22 @@ class MyWindow(QMainWindow):
         action_info.triggered.connect(self.show_infos)
         self.toolbar.addAction(action_info)
 
+        action_trans = QAction("trans", self)
+        action_trans.triggered.connect(self.show_trans)
+        self.toolbar.addAction(action_trans)
+
+        action_c_trans = QAction("CTrans", self)
+        action_c_trans.triggered.connect(self.show_c_trans)
+        self.toolbar.addAction(action_c_trans)
+
         action_enregistrer = QAction("enregistrer", self)
         action_enregistrer.triggered.connect(self.show_enregistrer)
         self.toolbar.addAction(action_enregistrer)
 
-        self.qStackwidget.setCurrentWidget(self.transcription)  #!!!! a suprimer a la fin
+        self.controller = NavigationController()
+        self.controller.set_main_window(self, self.qStackwidget)
+
+        # self.qStackwidget.setCurrentWidget(self.enregistrer)  #!!!! a suprimer a la fin
 
     def show_home(self):
         """Afficher la page d'accueil"""
@@ -154,6 +173,14 @@ class MyWindow(QMainWindow):
     def show_enregistrer(self):
         """Afficher le menu d'enregistrement"""
         self.qStackwidget.setCurrentWidget(self.enregistrer)
+
+    def show_trans(self):
+        """Afficher la page de transcription"""
+        self.qStackwidget.setCurrentWidget(self.transcription)
+
+    def show_c_trans(self):
+        """Afficher la page de correction de la transcription"""
+        self.qStackwidget.setCurrentWidget(self.correction_transcription)
 
     def ajuster_image(self):
         # Redimensionner l'image pour s'adapter Ã  la fenÃªtre

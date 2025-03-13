@@ -45,16 +45,16 @@ class Informations(QWidget):
         self.image_texteLayout.setAlignment(Qt.AlignCenter)
 
         # créer l'image
-        self.image = QLabel()
+        self.image = QLabel(self.fond)
         self.image.setPixmap(QPixmap("./assets/image/doctorshape.jpg").scaled(330, 400))
 
     def creerTexte(self):
         # créer le texte de présentation
-        self.text1 = QLabel("<b>Gagnez du temps et optimisez vos analyses !</b>")
+        self.text1 = QLabel("<b>Gagnez du temps et optimisez vos analyses !</b>",self.fond)
         self.text2 = QLabel(
-            "<b> OrthoLyse vous aide à transcrire et analyser les productions langagières de vos patients en un clic.</b>")
+            "<b> OrthoLyse vous aide à transcrire et analyser les productions langagières de vos patients en un clic.</b>",self.fond)
         self.text3 = QLabel(
-            "<b>Grâce à des outils intuitifs et des statistiques détaillées, évaluez facilement la complexité syntaxique et concentrez-vous sur l’essentiel : l’accompagnement thérapeutique.</b>")
+            "<b>Grâce à des outils intuitifs et des statistiques détaillées, évaluez facilement la complexité syntaxique et concentrez-vous sur l’essentiel : l’accompagnement thérapeutique.</b>",self.fond)
 
         # appliquer le style sur les textes
         self.appliquerStyleTexte(self.text1,20)
@@ -65,7 +65,7 @@ class Informations(QWidget):
         widget.setStyleSheet(f"font-family: georgia; font-size: {taille}px;")
 
         widget.setMinimumWidth(self.width()*0.66)  # Permet au QLabel de se réduire au besoin
-        widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         widget.setWordWrap(True)
 
 
@@ -93,20 +93,22 @@ class Informations(QWidget):
         self.image_texteLayout.addStretch(1)
 
     def creerChiffreEtape(self,texte, couleur="#9cd3da", taille=20):
-        label = QLabel(f"<b>{texte}</b>")
+        label = QLabel(f"<b>{texte}</b>",self.fond2)
         label.setStyleSheet(f"color: {couleur}; font-size: {taille}px;")
+        label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         label.setAlignment(Qt.AlignCenter)
         return label
 
     def creerTexteEtape(self,texte, couleur="#7b7c7c", taille=40):
-        label = QLabel(f"<b>{texte}</b>")
+        label = QLabel(f"<b>{texte}</b>",self.fond2)
         label.setStyleSheet(f"color: {couleur}; font-size: {taille}px;font-family:georgia;")
+        label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         label.setAlignment(Qt.AlignCenter)
         label.setWordWrap(True)
         return label
 
     def creerSeparateur(self,couleur="#9cd3da"):
-        line=QFrame()
+        line=QFrame(self.fond2)
         line.setFrameShape(QFrame.VLine)
         line.setStyleSheet(f"border: 3px dashed {couleur};")
         return line
@@ -134,7 +136,11 @@ class Informations(QWidget):
 
 
     def alignerElementsH2(self):
-        # organiser chaque etape dans un layout vertical puis tout mettre dans un layout horizontal
+        # organiser chaque etape dans un layout vertical puis tout mettre dans un layout horizontal qui sera aligner verticalement avec le texte comment ça marche
+
+
+
+        #le layout horizontal pour les etapes
         self.etapes = QHBoxLayout()
         self.etapes.setAlignment(Qt.AlignCenter)
 
@@ -177,8 +183,14 @@ class Informations(QWidget):
         self.etape3.addWidget(self.text_etape3)
         self.etape3.addStretch(2)
         self.etapes.addLayout(self.etape3)
-
         self.etapes.addStretch(2)
+
+        #tout aligner verticalement avec le texte
+        self.vlayout = QVBoxLayout()
+        self.vlayout.setAlignment(Qt.AlignCenter)
+        self.vlayout.addWidget(self.text_etapes)
+        self.vlayout.addSpacing(5)
+        self.vlayout.addLayout(self.etapes)
 
     def alignerAllElements(self):
         # TOUT ALIGNER VERTICALEMENT
@@ -189,32 +201,25 @@ class Informations(QWidget):
         self.mainLayout.addStretch(0)
         self.mainLayout.addLayout(self.image_texteLayout)
 
-        # ajouter le texte "comment ça marche" au layout principal
-        self.mainLayout.addWidget(self.text_etapes)
+        # ajouter le vlayout contenant le texte et le layout horizontal des etapes au layout principal
         self.mainLayout.addStretch(0)
-        self.mainLayout.addLayout(self.etapes)
-        self.mainLayout.addStretch(0)
+        self.mainLayout.addLayout(self.vlayout)
+
         # definir le layout principal comme layout de la page
         self.setLayout(self.mainLayout)
 
     def resizeEvent(self, event):
         """Adapte dynamiquement la taille du texte et la couleur de fond."""
 
-        #self.text1.setMinimumSize(500, 114)
-        #self.text1.setMaximumSize(self.width(), 114)
-        #self.text2.setMinimumSize(500, 114)
-        #self.text2.setMaximumSize(self.width(), 114)
-        #self.text3.setMinimumSize(500, 114)
-        #self.text3.setMaximumSize(self.width(), 114)
-
 
 
         # Calculer un facteur d'échelle basé sur la largeur de la fenêtre
         scale_factor = self.width() / 1117  # 1117 est la largeur initiale de la fenêtre
+        h_scale_factor = self.height()/768
 
         # Adapter la taille de l'image proportionnellement
         new_width = int(330 * scale_factor)
-        new_height = int(400 * scale_factor)
+        new_height = int(400 * h_scale_factor)
         self.image.setPixmap(QPixmap("./assets/image/doctorshape.jpg").scaled(new_width, new_height, Qt.KeepAspectRatio,
                                                                               Qt.SmoothTransformation))
 
@@ -242,6 +247,3 @@ class Informations(QWidget):
         self.fond2.setGeometry(0, self.height() // 2 + 50, self.width(), self.height() // 2 - 50)
 
         super().resizeEvent(event)
-
-
-

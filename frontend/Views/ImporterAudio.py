@@ -217,6 +217,7 @@ class ImporterAudio(QWidget):
                         border-radius: 10px;
                         border: 2px solid #15B5D4;
                     """)
+        self.right_boutton.clicked.connect(lambda: self.controller.change_page("Transcription"))
 
     def eventFilter(self, obj, event):
         # Vérifie si l'objet est la zone de dépôt
@@ -230,6 +231,7 @@ class ImporterAudio(QWidget):
                 print("Fichier déposé:", files[0])  # Gestion du fichier déposé
                 print("\nnom:", os.path.basename(files[0]))
                 self.reload_in_drop_zone(files[0])
+                self.controller.set_file_transcription_path(files[0])
                 return True  # Événement traité
         return super().eventFilter(obj, event)
 
@@ -241,6 +243,7 @@ class ImporterAudio(QWidget):
             print("Fichier sélectionné :", file_path)  # Gestion du fichier sélectionné
             print("\nnom:",os.path.basename(file_path))
             self.reload_in_drop_zone(file_path)
+            self.controller.set_file_transcription_path(file_path)
 
     def adjust_boutton_size(self, event=None):
         if not self.parentWidget():
