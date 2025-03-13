@@ -94,7 +94,10 @@ class Feuille(QWidget):
 
         if self.left_button_text=="Valider":
             self.controller.set_text_transcription(self.text_edit.toPlainText())
-            self.left_boutton.clicked.connect(lambda :self.controller.change_page("Transcription"))
+            self.left_boutton.clicked.connect(
+                lambda: (self.controller.set_text_transcription(self.text_edit.toPlainText()),
+                         self.controller.change_page("Transcription")))
+
         label_layout = QHBoxLayout()
         label_layout.addStretch(1)
         label_layout.addWidget(self.right_boutton)

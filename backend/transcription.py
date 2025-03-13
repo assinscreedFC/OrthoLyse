@@ -43,7 +43,7 @@ def transcription(file_path , mdl):
         dc = "mps"
 
     # on charge le modele whisper demander par l'utilisateur au par avant
-    modele = whisper.load_model(modele_dispo[mdl] , device=dc)
+    modele = whisper.load_model(modele_dispo[mdl] , device="cuda")
 
     #deux cas de transcritption 
     #1- on a diviser le fichier originel >> on fait la transcription de chaque fichier disponible dans le dossier
@@ -66,4 +66,5 @@ def transcription(file_path , mdl):
             os.remove(file_path)
             file_path = temp_file_name
     
-#print(list(transcription("/Users/danil/Documents/PROJET-OrthoLyse/fichierTeste/arte.mp3",0)))
+print(list(transcription("./videoplayback.mp4",0)))
+print(torch.cuda.is_available())
