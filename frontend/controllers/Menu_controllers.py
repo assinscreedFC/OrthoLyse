@@ -17,10 +17,10 @@ class NavigationController:
             cls._instance = super(NavigationController, cls).__new__(cls)
             cls._instance.main_window = None  # RÃ©fÃ©rence Ã  MainWindow
             cls._instance.central_widget = None  # RÃ©fÃ©rence au QStackedWidget
-            cls._instance.file_transcription_path = None  # RÃ©fÃ©rence au QStackedWidget
+            cls._instance.file_transcription_path = (
+                None  # RÃ©fÃ©rence au QStackedWidget
+            )
             cls._instance.text_transcription = None  # RÃ©fÃ©rence au QStackedWidget
-
-
 
         return cls._instance
 
@@ -57,13 +57,23 @@ class NavigationController:
                 self.central_widget.setCurrentWidget(self.main_window.enregistrer)
             elif page_name == "Help":
                 self.central_widget.setCurrentWidget(self.main_window.help)
+            elif page_name == "Prenregistrer":
+                self.central_widget.setCurrentWidget(self.main_window.prenregistrer)
             elif page_name == "Enregistrer":
                 self.central_widget.setCurrentWidget(self.main_window.enregistrer)
+            elif page_name == "StopEnregistrer":
+                self.central_widget.setCurrentWidget(self.main_window.stopenregistrer)
             elif page_name == "Transcription":
+
                 # Vérifier si la page existe déjà
-                if hasattr(self.main_window,
-                           "transcription") and self.main_window.transcription in self.main_window.qStackwidget.children():
-                    self.main_window.qStackwidget.removeWidget(self.main_window.transcription)
+                if (
+                    hasattr(self.main_window, "transcription")
+                    and self.main_window.transcription
+                    in self.main_window.qStackwidget.children()
+                ):
+                    self.main_window.qStackwidget.removeWidget(
+                        self.main_window.transcription
+                    )
                     self.main_window.transcription.deleteLater()  # Libérer la mémoire
 
                 # Créer une nouvelle instance
@@ -73,15 +83,24 @@ class NavigationController:
 
             elif page_name == "CTanscription":
                 # Vérifier si la page existe déjà
-                if hasattr(self.main_window,
-                           "correction_tanscription") and self.main_window.correction_tanscription in self.main_window.qStackwidget.children():
-                    self.main_window.qStackwidget.removeWidget(self.main_window.correction_tanscription)
+                if (
+                    hasattr(self.main_window, "correction_tanscription")
+                    and self.main_window.correction_tanscription
+                    in self.main_window.qStackwidget.children()
+                ):
+                    self.main_window.qStackwidget.removeWidget(
+                        self.main_window.correction_tanscription
+                    )
                     self.main_window.correction_tanscription.deleteLater()  # Libérer la mémoire
 
                 # Créer une nouvelle instance
                 self.main_window.correction_tanscription = CorrectionTranscription()
-                self.main_window.qStackwidget.addWidget(self.main_window.correction_tanscription)
-                self.central_widget.setCurrentWidget(self.main_window.correction_tanscription)
+                self.main_window.qStackwidget.addWidget(
+                    self.main_window.correction_tanscription
+                )
+                self.central_widget.setCurrentWidget(
+                    self.main_window.correction_tanscription
+                )
 
     def set_file_transcription_path(self, file_path):
         self.file_transcription_path = file_path
@@ -103,7 +122,7 @@ class NavigationController:
             sys.exit(1)
         else:
             font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
-            font = QFont(font_family, 14)  # 14 = Taille de la police
+            font = QFont(font_family, 12)  # 14 = Taille de la police par defaut
 
         return font, font_family
         # Ajouter d'autres conditions pour d'autres pages si nÃ©cessaire

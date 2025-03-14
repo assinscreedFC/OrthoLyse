@@ -27,7 +27,9 @@ from frontend.Views.ImporterAudio import ImporterAudio
 from frontend.Views.Menu import Menu
 from frontend.Views.ModeDeChargement import ModeDeChargement
 from frontend.Views.HelpTranscription import HelpTranscription
-from frontend.Views.eregistrement import Enregistrement
+from frontend.Views.Prenregistrement import Prenregistrement
+from frontend.Views.Enregistrement import Enregistrement
+from frontend.Views.StopEnregistrement import StopEnregistrement
 from frontend.controllers.Menu_controllers import NavigationController
 
 
@@ -59,12 +61,12 @@ class MyWindow(QMainWindow):
         self.mode_de_chargement = ModeDeChargement()
         self.qStackwidget.addWidget(self.mode_de_chargement)
 
-        #self.correction_transcription = CorrectionTranscription()
-        #self.qStackwidget.addWidget(self.correction_transcription)
+        # self.correction_transcription = CorrectionTranscription()
+        # self.qStackwidget.addWidget(self.correction_transcription)
 
         # audioplayer
-        #self.transcription = Transcription()
-        #self.qStackwidget.addWidget(self.transcription)
+        # self.transcription = Transcription()
+        # self.qStackwidget.addWidget(self.transcription)
         # info
         self.information = Informations()
         self.qStackwidget.addWidget(self.information)
@@ -82,8 +84,14 @@ class MyWindow(QMainWindow):
         self.qStackwidget.addWidget(self.help)
 
         # faire un enregistrement
+        self.prenregistrer = Prenregistrement()
+        self.qStackwidget.addWidget(self.prenregistrer)
+
         self.enregistrer = Enregistrement()
         self.qStackwidget.addWidget(self.enregistrer)
+
+        self.stopenregistrer = StopEnregistrement()
+        self.qStackwidget.addWidget(self.stopenregistrer)
 
         # CrÃ©er un QLabel pour afficher l'image de fond
         self.label_fond = QLabel(self)
@@ -124,7 +132,7 @@ class MyWindow(QMainWindow):
         action_import_audio = QAction("import", self)
         action_import_audio.triggered.connect(self.show_importer_audio)
         self.toolbar.addAction(action_import_audio)
-        self.qStackwidget.setCurrentWidget(self.importer_audio)
+        # self.qStackwidget.setCurrentWidget(self.importer_audio)
 
         action_settings = QAction("settings", self)
         action_settings.triggered.connect(self.show_settings)

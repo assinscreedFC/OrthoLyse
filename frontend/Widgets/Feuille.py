@@ -89,9 +89,8 @@ class Feuille(QWidget):
 
         if self.right_butto_text=="Coriger":
             self.right_boutton.clicked.connect(lambda :self.controller.change_page("CTanscription"))
-        elif self.right_butto_text=="Transcrire":
+        elif self.right_butto_text=="Annuler":
             self.right_boutton.clicked.connect(lambda :self.controller.change_page("Transcription"))
-
         if self.left_button_text=="Valider":
             self.controller.set_text_transcription(self.text_edit.toPlainText())
             self.left_boutton.clicked.connect(
