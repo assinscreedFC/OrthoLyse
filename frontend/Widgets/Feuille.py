@@ -74,7 +74,7 @@ class Feuille(QWidget):
             self.text_edit = QPlainTextEdit(self.controller.get_text_transcription())
         else:
             self.text_edit = QPlainTextEdit("")
-
+        self.old_text = self.text_edit.toPlainText()
         self.text_edit.textChanged.connect(lambda: (self.controller.change_text(
             self.text_edit.toPlainText()),
             self.on_text_changed())
@@ -95,7 +95,7 @@ class Feuille(QWidget):
         if current_text != self.plain_text:
             self.plain_text = current_text
             # Recalculer le surlignage chaque fois que le texte change
-            self.mettre_a_jour_surlignage(self.parentWidget().audio_player.position, self.controller.get_mapping_data())
+            self.mettre_a_jour_surlignage(self.parentWidget().audio_player.get_current_position(), self.controller.get_mapping_data())
 
     def bottom(self):
         self.right_boutton=self.boutton(self.widget,self.right_butto_text,"#15B5D4","#15B5D4","#FFFFFF")
@@ -104,6 +104,7 @@ class Feuille(QWidget):
         if self.right_butto_text=="Coriger":
             self.right_boutton.clicked.connect(lambda :self.controller.change_page("CTanscription"))
         elif self.right_butto_text=="Annuler":
+            self.controller.set_text_transcription(self.old_text)
             self.right_boutton.clicked.connect(lambda :self.controller.change_page("Transcription"))
         if self.left_button_text=="Valider":
             self.controller.set_text_transcription(self.text_edit.toPlainText())

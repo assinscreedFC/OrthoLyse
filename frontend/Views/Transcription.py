@@ -7,28 +7,19 @@ from frontend.Widgets.Feuille import Feuille
 
 
 class Transcription(QWidget):
-    def __init__(self):
+    def __init__(self,text,mapping_data,path=None):
         super().__init__()
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         from frontend.controllers.Menu_controllers import NavigationController
 
         self.controller = NavigationController()
-        self.ui()
+        self.ui(text,mapping_data,path)
 
-    def ui(self):
+    def ui(self,text,mapping_data,path=None):
 
-        self.path = self.controller.get_file_transcription_path()
-        if self.controller.get_text_transcription() is None:
-
-            result=transcription(self.path, 0)
-            self.text=result["text"]
-            self.mapping_data=result["mapping"]
-            self.controller.set_text_transcription(self.text)
-            self.controller.set_mapping_data(self.mapping_data)
-        else:
-            print(("valider"))
-            self.text = self.controller.get_text_transcription()
-            self.mapping_data=self.controller.get_mapping_data()
+        self.path =path
+        self.text=text
+        self.mapping_data=mapping_data
 
         self.layout = QHBoxLayout(self)
         self.layout.setAlignment(Qt.AlignCenter)

@@ -64,7 +64,6 @@ class AudioPlayer(QWidget):
             self.slider.blockSignals(False)
 
         self.position_en_secondes.emit(position / 1000)
-        self.position=position / 1000
         mm, ss = divmod(position // 1000, 60)
         self.left_time_label.setText(f"{mm:02d}:{ss:02d}")
 
@@ -86,6 +85,12 @@ class AudioPlayer(QWidget):
 
     def set_playback_speed(self, speed):
         self.player.setPlaybackRate(speed)
+
+    def get_current_position(self):
+        """
+        Retourne la position actuelle du fichier audio en secondes.
+        """
+        return self.player.position() / 1000.0
 
     def set_font(self, font_path):
         font_id = QFontDatabase.addApplicationFont(font_path)

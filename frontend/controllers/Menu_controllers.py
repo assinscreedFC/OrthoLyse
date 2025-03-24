@@ -3,7 +3,7 @@ import sys
 
 from PySide6.QtGui import QFontDatabase, QFont
 
-from backend.transcription import ajuster_mapping
+from backend.transcription import ajuster_mapping, transcription,custom_tokenize
 from frontend.Views.CorrectionTranscription import CorrectionTranscription
 from frontend.Views.Transcription import Transcription
 
@@ -66,6 +66,11 @@ class NavigationController:
                 self.central_widget.setCurrentWidget(self.main_window.stopenregistrer)
             elif page_name == "Transcription":
 
+                if self.get_text_transcription() is None:
+                    result = transcription(self.file_transcription_path, 0)
+                    self.set_text_transcription(result["text"])
+                    self.set_mapping_data(result["mapping"])
+                    self.set_first_mapping(result["mapping"])
                 # Vérifier si la page existe déjà
                 if (
                     hasattr(self.main_window, "transcription")
@@ -78,7 +83,7 @@ class NavigationController:
                     self.main_window.transcription.deleteLater()  # Libérer la mémoire
 
                 # Créer une nouvelle instance
-                self.main_window.transcription = Transcription()
+                self.main_window.transcription = Transcription(self.text_transcription,self.mapping_data,self.file_transcription_path)
                 self.main_window.qStackwidget.addWidget(self.main_window.transcription)
                 self.central_widget.setCurrentWidget(self.main_window.transcription)
 
@@ -95,7 +100,7 @@ class NavigationController:
                     self.main_window.correction_tanscription.deleteLater()  # Libérer la mémoire
 
                 # Créer une nouvelle instance
-                self.main_window.correction_tanscription = CorrectionTranscription()
+                self.main_window.correction_tanscription = CorrectionTranscription(self.text_transcription,self.mapping_data,self.file_transcription_path)
                 self.main_window.qStackwidget.addWidget(
                     self.main_window.correction_tanscription
                 )
@@ -136,4 +141,13 @@ class NavigationController:
 
     def change_text(self,text):
         if (text != self.text_transcription):
-            self.mapping_data =ajuster_mapping(text,self.mapping_data)
+            if (len(self.first_mapping_data) == len(custom_tokenize(text))):
+                self.mapping_data =ajuster_mapping(self.text_transcription,text,self.first_mapping_data)
+            else:
+
+                self.mapping_data =ajuster_mapping(self.text_transcription,text,self.mapping_data)
+            self.set_text_transcription(text)
+
+    def set_first_mapping(self,mapping):
+        self.first_mapping_data = mapping
+

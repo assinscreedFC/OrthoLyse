@@ -12,7 +12,7 @@ class CorrectionTranscription(QWidget):
     Comprend un lecteur audio et une zone d'édition du texte transcrit.
     """
 
-    def __init__(self):
+    def __init__(self,text,mapping_data,path=None):
         """
         Initialise la fenêtre de correction de transcription.
         Configure le contrôleur pour récupérer les données de transcription et configure l'interface.
@@ -24,28 +24,17 @@ class CorrectionTranscription(QWidget):
         from frontend.controllers.Menu_controllers import NavigationController
         self.controller = NavigationController()
 
-        self.ui()
+        self.ui(text,mapping_data,path)
 
-    def ui(self):
+    def ui(self,text,mapping_data,path=None):
         """
         Initialise l'interface utilisateur :
         - Récupère le chemin du fichier audio et la transcription associée.
         - Crée un lecteur audio et un éditeur de texte pour la correction.
         """
-        self.path = self.controller.get_file_transcription_path()
-        if self.controller.get_text_transcription() is None:
-
-            result = transcription(self.path, 0)
-            self.text = result["text"]
-            self.mapping_data = result["mapping"]
-            self.controller.set_text_transcription(self.text)
-            self.controller.set_mapping_data(self.mapping_data)
-
-        else:
-            print(("valider"))
-            self.text = self.controller.get_text_transcription()
-            self.mapping_data = self.controller.get_mapping_data()
-
+        self.path = path
+        self.text = text
+        self.mapping_data = mapping_data
         self.layout = QHBoxLayout(self)
         self.layout.setAlignment(Qt.AlignCenter)
         self.audio_player = AudioPlayer(self.path)
@@ -57,7 +46,6 @@ class CorrectionTranscription(QWidget):
         )
         self.feuille.setObjectName("feuille")
         self.feuille.text_edit.setReadOnly(False)
-        self.audio_player.position_en_secondes
         self.layout.addWidget(self.audio_player)
         self.layout.setSpacing(10)
         self.layout.addWidget(self.feuille)
