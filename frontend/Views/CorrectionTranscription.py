@@ -32,12 +32,16 @@ class CorrectionTranscription(QWidget):
         - Récupère le chemin du fichier audio et la transcription associée.
         - Crée un lecteur audio et un éditeur de texte pour la correction.
         """
+        self.path = self.controller.get_file_transcription_path()
+        if self.controller.get_text_transcription() is None:
+            self.text = list(transcription(self.path, 0))[0]
+            self.controller.set_text_transcription(self.text)
+        else:
+            print(("valider"))
+            self.text = self.controller.get_text_transcription()
+
         self.layout = QHBoxLayout(self)
         self.layout.setAlignment(Qt.AlignCenter)
-
-        self.path = self.controller.get_file_transcription_path()
-        self.text = self.controller.get_text_transcription()
-
         self.audio_player = AudioPlayer(self.path)
 
         self.feuille = Feuille(
@@ -59,9 +63,10 @@ class CorrectionTranscription(QWidget):
         Ce redimensionnement permet d'adapter l'interface au changement de taille de la fenêtre.
         """
         super().resizeEvent(event)
-        self.adjust_layout()
+        print("Nouvelle taille de Feuille :", self.width(), self.height())
+        self.test(event)
 
-    def adjust_layout(self, event):
+    def test(self, event):
         """
         Ajuste la taille du widget d'édition en fonction des dimensions de la fenêtre.
         Cela permet de maintenir un aspect visuel cohérent même lors de la modification de la taille de la fenêtre.

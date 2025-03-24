@@ -1,7 +1,7 @@
 import os
 import sys
 
-from PySide6.QtCore import QUrl, Qt
+from PySide6.QtCore import QUrl, Qt, Signal
 from PySide6.QtGui import QFontDatabase, QFont, QIcon
 from PySide6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PySide6.QtWidgets import (
@@ -12,32 +12,20 @@ from frontend.Widgets.HoverSlider import HoverSlider
 
 
 class AudioPlayer(QWidget):
-    """
-    Classe permettant de lire un fichier audio avec des contrôles de lecture.
-    Inclut un lecteur audio, des boutons de contrôle (play/pause, avance, retour),
-    ainsi qu'un curseur de position et un menu pour régler la vitesse de lecture.
-    """
 
-    def __init__(self, path=None):
-        """
-        Initialise le lecteur audio.
+    position_en_secondes = Signal(float)
 
-        :param path: Chemin du fichier audio à lire.
-        """
+    def __init__(self,path=None):
         super().__init__()
-        self.path = path
+        self.path=path
         self.setFixedSize((642 // 2) - 40, 100)
         self.font, self.font_family = self.set_font(
             "./assets/Fonts/Inter,Montserrat,Roboto/Inter/static/Inter_24pt-SemiBold.ttf")
         self.inner_widgets()
         self.init_player(self.path)
+        #self.slots()
 
     def init_player(self, file_path):
-        """
-        Initialise le lecteur multimédia et les connexions nécessaires.
-
-        :param file_path: Chemin du fichier audio à lire.
-        """
         self.player = QMediaPlayer(self)
         self.audio_output = QAudioOutput(self)
         self.player.setAudioOutput(self.audio_output)
@@ -55,10 +43,6 @@ class AudioPlayer(QWidget):
         self.forward_button.clicked.connect(self.forward_10s)
 
     def toggle_play_pause(self):
-        """
-        Bascule entre lecture et pause.
-        Modifie l'icône du bouton en fonction de l'état de lecture.
-        """
         if not self.is_playing:
             self.player.play()
             self.play_pause_button.setIcon(QIcon("./assets/SVG/pause.svg"))
@@ -68,75 +52,41 @@ class AudioPlayer(QWidget):
         self.is_playing = not self.is_playing
 
     def rewind_10s(self):
-        """
-        Rewind de 10 secondes dans le fichier audio.
-        """
         self.player.setPosition(max(self.player.position() - 10000, 0))
 
     def forward_10s(self):
-        """
-        Avance de 10 secondes dans le fichier audio.
-        """
         self.player.setPosition(min(self.player.position() + 10000, self.player.duration()))
 
     def update_position(self, position):
-        """
-        Met à jour la position actuelle du curseur en fonction de la lecture.
-
-        :param position: Position actuelle de la lecture en millisecondes.
-        """
         if self.duration > 0:
             self.slider.blockSignals(True)
             self.slider.setValue(int(position / self.duration * 100))
             self.slider.blockSignals(False)
+
+        self.position_en_secondes.emit(position / 1000)
         mm, ss = divmod(position // 1000, 60)
         self.left_time_label.setText(f"{mm:02d}:{ss:02d}")
 
     def update_duration(self, dur):
-        """
-        Met à jour la durée totale de la piste audio.
-
-        :param dur: Durée totale du fichier audio en millisecondes.
-        """
         self.duration = dur
+
         mm, ss = divmod(dur // 1000, 60)
         self.right_time_label.setText(f"{mm:02d}:{ss:02d}")
 
     def seek_position(self, slider_value):
-        """
-        Déplace la position de lecture en fonction de la valeur du curseur.
-
-        :param slider_value: Valeur du curseur pour déplacer la position de lecture.
-        """
         if self.duration > 0:
             self.player.setPosition(int(slider_value / 100 * self.duration))
 
     def handle_media_status(self, status):
-        """
-        Gère l'état du média (fin de lecture, etc.).
-
-        :param status: Statut actuel du média.
-        """
         if status == QMediaPlayer.EndOfMedia:
             self.play_pause_button.setIcon(QIcon("./assets/SVG/play_arrow.svg"))
             self.is_playing = False
             self.player.setPosition(0)
 
     def set_playback_speed(self, speed):
-        """
-        Définit la vitesse de lecture du média.
-
-        :param speed: Vitesse de lecture souhaitée (ex. 1.0, 1.5, etc.).
-        """
         self.player.setPlaybackRate(speed)
 
     def set_font(self, font_path):
-        """
-        Charge et définit la police à utiliser dans l'interface.
-
-        :param font_path: Chemin vers le fichier de police.
-        :return: La police chargée et le nom de la famille de la police.
-        """
         font_id = QFontDatabase.addApplicationFont(font_path)
         if font_id == -1:
             print("Erreur de chargement de police")
@@ -145,9 +95,6 @@ class AudioPlayer(QWidget):
         return QFont(font_family, 24), font_family
 
     def inner_widgets(self):
-        """
-        Crée et organise les widgets internes du lecteur audio.
-        """
         self.inner_widget = QWidget(self)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.inner_widget.setAutoFillBackground(True)
@@ -161,20 +108,12 @@ class AudioPlayer(QWidget):
         self.inner_widget.setLayout(self.main_layout)
 
     def timer_label(self):
-        """
-        Crée un label pour afficher le temps.
-
-        :return: Le label pour le temps.
-        """
         time_label = QLabel("00:00", self.inner_widget)
         time_label.setStyleSheet("color: #000;")
         time_label.setFont(QFont(self.font_family, 10))
         return time_label
 
     def top_part(self):
-        """
-        Crée la partie supérieure du lecteur audio, y compris le curseur et les labels de temps.
-        """
         self.slider = HoverSlider(Qt.Horizontal, self.inner_widget)
         self.slider.setValue(0)
         self.slider.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -191,14 +130,6 @@ class AudioPlayer(QWidget):
         self.main_layout.addLayout(layoutH)
 
     def boutton(self, file_path, sizeicone=3, sizebutton=40):
-        """
-        Crée un bouton avec une icône.
-
-        :param file_path: Chemin vers l'icône du bouton.
-        :param sizeicone: Taille de l'icône dans le bouton.
-        :param sizebutton: Taille du bouton.
-        :return: Le bouton créé.
-        """
         button = QPushButton()
         button.setIcon(QIcon(file_path))
         button.setIconSize((self.size() / sizeicone))
@@ -213,13 +144,10 @@ class AudioPlayer(QWidget):
                                 background-color: #CCC;
                             }}
                                 QPushButton::menu-indicator {{ width: 0; height: 0; }}
+
                         """)
         return button
-
     def bottom_part(self):
-        """
-        Crée la partie inférieure du lecteur audio, y compris les boutons de contrôle.
-        """
         bottom_layout = QHBoxLayout()
         bottom_layout.setSpacing(30)
         bottom_layout.setAlignment(Qt.AlignCenter)
@@ -239,9 +167,7 @@ class AudioPlayer(QWidget):
         self.main_layout.addLayout(bottom_layout)
 
     def resizeEvent(self, event):
-        """
-        Gère l'événement de redimensionnement de la fenêtre.
-        Positionne les widgets en conséquence.
-        """
         super().resizeEvent(event)
-        self.inner_widget.setFixedWidth(self.width())
+        # Positionne le bouton "more" dans le coin supérieur droit
+        # Ici, on le place à 10 pixels du bord droit et 10 pixels du haut
+        self.more_boutton.move(self.width() - self.more_boutton.width() - 20, self.height() - self.more_boutton.height() - 35)

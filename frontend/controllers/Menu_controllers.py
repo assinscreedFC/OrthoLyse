@@ -111,6 +111,12 @@ class NavigationController:
     def set_text_transcription(self, text):
         self.text_transcription = text
 
+    def set_mapping_data(self, data):
+        self.mapping_data = data
+
+    def get_mapping_data(self):
+        return self.mapping_data
+
     def get_text_transcription(self):
         return self.text_transcription
 

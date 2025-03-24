@@ -162,3 +162,7 @@ cython_debug/
 #.idea/
 frontend/test.py
 .idea/vcs.xml
+backend/temp_alignment_output/corpus/videoplayback.lab
+backend/temp_alignment_output/corpus/videoplayback.mp4
+backend/test.py
+backend/test.py
