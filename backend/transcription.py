@@ -19,54 +19,72 @@ from backend.operation_fichier import (
 
 modele_dispo = ["base", "small", "medium", "turbo"]
 
-
-def extraire_mapping_depuis_results(results):
+def extraire_mapping_depuis_segments(segments):
     """
-    Combine les segments de transcription provenant de plusieurs résultats (blocs)
-    en un seul texte global et calcule le mapping avec gestion du décalage temporel.
+    Fonction qui retourne le texte global et le mapping des mots avec les indices.
 
-    Retourne:
+    Arguments :
+        segments (list): Liste de segments contenant les données "start", "end", "text" et les timestamps pour chaque mot.
+
+    Retourne :
         tuple: (texte_global, mapping_data)
-            texte_global (str): Le texte complet extrait de tous les blocs.
-            mapping_data (list): Liste de tuples (adjusted_start, adjusted_end, start_idx, end_idx)
+            texte_global (str): Le texte complet extrait des segments.
+            mapping_data (list): Liste de tuples (start_time, end_time, start_idx, end_idx) pour chaque mot.
     """
     texte_global = ""
     mapping = []
-    current_index = 0
-    offset_time = 0.0
+    current_index = 0  # Index actuel dans le texte global
 
-    # Pour chaque résultat de transcription (chaque bloc)
-    for res in results:
-        segments = res.get("segments", [])
-        for seg in segments:
-            segment_text = seg.get("text", "").strip()
-            relative_start = seg.get("start", 0.0)
-            relative_end = seg.get("end", 0.0)
+    for seg in segments:
+        segment_text = seg.get("text", "").strip()  # Nettoie les espaces inutiles
+        start_time = seg.get("start", 0.0)  # Temps de début du segment
+        end_time = seg.get("end", 0.0)  # Temps de fin du segment
 
-            # Calculer les timestamps ajustés en ajoutant l'offset du bloc courant
-            adjusted_start = relative_start + offset_time
-            adjusted_end = relative_end + offset_time
+        words = segment_text.split()  # Diviser le texte en mots
 
-            start_idx = current_index
-            end_idx = current_index + len(segment_text)
+        # Si le modèle Whisper fournit des timestamps pour chaque mot
+        word_timestamps = seg.get("word_timestamps", [])
 
-            mapping.append((adjusted_start, adjusted_end, start_idx, end_idx))
-            texte_global += segment_text + " "
-            current_index = end_idx + 1  # +1 pour l'espace ajouté
+        if word_timestamps and len(word_timestamps) == len(words):
+            # Utiliser les timestamps de chaque mot si fournis
+            for i, (word, timestamp) in enumerate(zip(words, word_timestamps)):
+                word_start_time = timestamp['start']
+                word_end_time = timestamp['end']
 
-        # Mettre à jour l'offset temporel pour le prochain bloc,
-        # en ajoutant la durée totale du bloc actuel (le temps de fin du dernier segment)
-        if segments:
-            last_seg_end = segments[-1].get("end", 0.0)
-            offset_time += last_seg_end
+                start_idx = current_index
+                end_idx = current_index + len(word)
+
+                # Ajouter au mapping
+                mapping.append((word_start_time, word_end_time, start_idx, end_idx))
+
+                # Concaténer le texte
+                texte_global += word + " "  # Ajout d'un espace pour la lisibilité
+                current_index = end_idx + 1
+        else:
+            # Si aucun timestamp n'est disponible, utiliser la méthode de découpage uniforme
+            duration = end_time - start_time
+            word_duration = duration / len(words) if words else 0
+
+            for i, word in enumerate(words):
+                word_start_time = start_time + word_duration * i
+                word_end_time = word_start_time + word_duration
+
+                start_idx = current_index
+                end_idx = current_index + len(word)
+
+                # Ajouter au mapping
+                mapping.append((word_start_time, word_end_time, start_idx, end_idx))
+
+                # Concaténer le texte
+                texte_global += word + " "  # Ajout d'un espace pour la lisibilité
+                current_index = end_idx + 1
 
     return texte_global.strip(), mapping
-
 
 def transcription(file_path, mdl):
     """
     Fonction qui retourne un dictionnaire avec le texte complet et le mapping des mots,
-    en tenant compte du décalage temporel entre les différents blocs de transcription.
+    avec les timestamps au niveau des mots.
 
     Arguments :
         file_path (str): chemin du fichier
@@ -89,7 +107,7 @@ def transcription(file_path, mdl):
         file_path = os.path.join(os.getcwd(), temp)
         useExtract = True
 
-    # Si le fichier est trop volumineux (>25Mo ou >10min), le diviser en morceaux
+    # Si le fichier est trop volumineux ( >25Mo ou >10min), le diviser en morceaux
     if file_size_Mo(file_path) > 25 or file_size_sec(file_path) > 600:
         fileNb, outDir = split_audio(file_path)
         useSplit = True
@@ -100,33 +118,43 @@ def transcription(file_path, mdl):
     elif torch.backends.mps.is_available():
         dc = "mps"
 
-    # Charger le modèle Whisper demandé
+    # Charger le modèle Whisper demandé par l'utilisateur
     modele = whisper.load_model(modele_dispo[mdl], device=dc)
 
     results = []
     if useSplit:
         for i in range(1, fileNb + 1):
             temp_file_path = os.path.join(os.path.abspath(outDir), f'{i}.mp3')
-            transcription_result = modele.transcribe(temp_file_path)
+            transcription_result = modele.transcribe(temp_file_path, word_timestamps=True)  # Activation des word-level timestamps
             results.append(transcription_result)
         shutil.rmtree(outDir)  # Nettoyer les fichiers temporaires
     else:
-        transcription_result = modele.transcribe(file_path)
+        transcription_result = modele.transcribe(file_path, word_timestamps=True)  # Activation des word-level timestamps
         results.append(transcription_result)
 
-    # Si on a extrait l'audio d'un mp4, supprimer le fichier temporaire
+    # Si on a extrait l'audio d'un fichier mp4, supprimer le fichier temporaire
     if useExtract:
         os.remove(file_path)
         file_path = temp_file_name
 
-    # Combiner les résultats et gérer le décalage temporel
-    texte_global, mapping_data = extraire_mapping_depuis_results(results)
+    # Combiner tous les segments en un seul tableau
+    combined_segments = []
+    for res in results:
+        for seg in res.get("segments", []):
+            combined_segments.append({
+                "start": seg["start"],
+                "end": seg["end"],
+                "text": seg["text"].strip(),
+                "word_timestamps": seg.get("word_timestamps", [])
+            })
+
+    # Obtenir le texte complet et le mapping des mots
+    texte_global, mapping_data = extraire_mapping_depuis_segments(combined_segments)
 
     return {
         "text": texte_global,
         "mapping": mapping_data
     }
-
 
 # Exemple d'utilisation
 if __name__ == "__main__":
