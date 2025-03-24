@@ -64,6 +64,7 @@ class AudioPlayer(QWidget):
             self.slider.blockSignals(False)
 
         self.position_en_secondes.emit(position / 1000)
+        self.position=position / 1000
         mm, ss = divmod(position // 1000, 60)
         self.left_time_label.setText(f"{mm:02d}:{ss:02d}")
 

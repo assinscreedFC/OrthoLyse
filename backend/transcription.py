@@ -19,6 +19,37 @@ from backend.operation_fichier import (
 
 modele_dispo = ["base", "small", "medium", "turbo"]
 
+def ajuster_mapping(texte_modifie, mapping_original):
+    """
+    Fonction qui ajuste les timestamps des mots après modification du texte.
+
+    Arguments :
+        texte_modifie (str): Le texte après modification.
+        mapping_original (list): Liste des timestamps des mots avant modification.
+
+    Retourne :
+        list: Liste ajustée des tuples (start_time, end_time, start_idx, end_idx) pour chaque mot.
+    """
+    mots_modifies = texte_modifie.split()
+    mapping_ajuste = []
+    current_index = 0  # L'index actuel dans le texte modifié
+
+    for i, mot in enumerate(mots_modifies):
+        # Trouver les timestamps originaux du mot
+        start_time, end_time, start_idx, end_idx = mapping_original[i]
+
+        # Recalculer les nouveaux timestamps en fonction de la position dans le texte modifié
+        new_start_time = start_time  # Vous pouvez ajuster cette logique si nécessaire
+        new_end_time = end_time  # Ajuster ici si les mots ont été modifiés et la durée change
+
+        # Ajouter le nouveau mapping ajusté
+        mapping_ajuste.append((new_start_time, new_end_time, current_index, current_index + len(mot)))
+
+        # Mettre à jour l'index actuel
+        current_index += len(mot) + 1  # Ajouter 1 pour l'espace entre les mots
+
+    return mapping_ajuste
+
 def extraire_mapping_depuis_segments(segments):
     """
     Fonction qui retourne le texte global et le mapping des mots avec les indices.

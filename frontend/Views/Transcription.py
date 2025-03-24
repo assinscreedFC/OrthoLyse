@@ -24,6 +24,7 @@ class Transcription(QWidget):
             self.text=result["text"]
             self.mapping_data=result["mapping"]
             self.controller.set_text_transcription(self.text)
+            self.controller.set_mapping_data(self.mapping_data)
         else:
             print(("valider"))
             self.text = self.controller.get_text_transcription()

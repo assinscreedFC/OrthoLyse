@@ -3,6 +3,7 @@ import sys
 
 from PySide6.QtGui import QFontDatabase, QFont
 
+from backend.transcription import ajuster_mapping
 from frontend.Views.CorrectionTranscription import CorrectionTranscription
 from frontend.Views.Transcription import Transcription
 
@@ -132,3 +133,7 @@ class NavigationController:
 
         return font, font_family
         # Ajouter d'autres conditions pour d'autres pages si nÃ©cessaire
+
+    def change_text(self,text):
+        if (text != self.text_transcription):
+            self.mapping_data =ajuster_mapping(text,self.mapping_data)

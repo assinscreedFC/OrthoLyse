@@ -75,13 +75,27 @@ class Feuille(QWidget):
         else:
             self.text_edit = QPlainTextEdit("")
 
-
+        self.text_edit.textChanged.connect(lambda: (self.controller.change_text(
+            self.text_edit.toPlainText()),
+            self.on_text_changed())
+        )
         self.text_edit.setReadOnly(True)
         self.text_edit.setFont(QFont(self.font_family,10))
 
         self.text_edit.setStyleSheet("background-color: #fafafa;color: black; border-radius: 10px;"
                                      "padding-top: 5px;padding-bottom: 5px;padding-left: 10px;padding-right: 10px;")
         self.main_layout.addWidget(self.text_edit)
+
+    def on_text_changed(self):
+        """
+        Cette fonction est appelée chaque fois que le texte dans le QPlainTextEdit change.
+        Elle met à jour le surlignage après chaque modification du texte.
+        """
+        current_text = self.text_edit.toPlainText()
+        if current_text != self.plain_text:
+            self.plain_text = current_text
+            # Recalculer le surlignage chaque fois que le texte change
+            self.mettre_a_jour_surlignage(self.parentWidget().audio_player.position, self.controller.get_mapping_data())
 
     def bottom(self):
         self.right_boutton=self.boutton(self.widget,self.right_butto_text,"#15B5D4","#15B5D4","#FFFFFF")
@@ -144,6 +158,8 @@ class Feuille(QWidget):
         mapping_data : liste de tuples (start_time, end_time, start_idx, end_idx)
         """
         texte_complet = self.text_edit.toPlainText()
+
+        # Si le texte est vide ou si aucune donnée de mappage n'est fournie, on ne fait rien.
         if not texte_complet or not mapping_data:
             return
 
@@ -154,25 +170,31 @@ class Feuille(QWidget):
                 segment_actif = (start_idx, end_idx)
                 break
 
-        cursor = self.text_edit.textCursor()
+        # Si aucun segment actif n'est trouvé, on arrête la fonction.
+        if not segment_actif:
+            return
 
         # 1) On efface tout surlignage existant
-        cursor.setPosition(0)
-        cursor.setPosition(len(texte_complet), QTextCursor.KeepAnchor)
+        cursor = self.text_edit.textCursor()
+        cursor.setPosition(0)  # Déplacer le curseur au début
+        cursor.setPosition(len(texte_complet), QTextCursor.KeepAnchor)  # Sélectionner tout le texte
         format_clear = cursor.charFormat()
-        format_clear.setBackground(QBrush(Qt.transparent))
+        format_clear.setBackground(QBrush(Qt.transparent))  # Enlever tout surlignage
         cursor.setCharFormat(format_clear)
 
-        # 2) On applique le surlignage
-        if segment_actif:
-            start_idx, end_idx = segment_actif
-            cursor.setPosition(start_idx)
-            cursor.setPosition(end_idx, QTextCursor.KeepAnchor)
+        # 2) On applique le surlignage sur le segment actif
+        start_idx, end_idx = segment_actif
 
-            highlight_format = cursor.charFormat()
-            highlight_format.setBackground(QBrush(QColor("yellow")))
-            cursor.setCharFormat(highlight_format)
+        # Vérifier que les indices sont valides
+        if start_idx < 0 or end_idx > len(texte_complet) or start_idx >= end_idx:
+            return  # On ne fait rien si les indices ne sont pas valides
 
+        cursor.setPosition(start_idx)
+        cursor.setPosition(end_idx, QTextCursor.KeepAnchor)  # Sélectionner la zone du segment
+
+        highlight_format = cursor.charFormat()
+        highlight_format.setBackground(QBrush(QColor("yellow")))  # Surligner en jaune
+        cursor.setCharFormat(highlight_format)
 
 
 text="""l'anis

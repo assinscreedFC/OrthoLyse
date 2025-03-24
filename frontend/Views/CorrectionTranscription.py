@@ -34,15 +34,22 @@ class CorrectionTranscription(QWidget):
         """
         self.path = self.controller.get_file_transcription_path()
         if self.controller.get_text_transcription() is None:
-            self.text = list(transcription(self.path, 0))[0]
+
+            result = transcription(self.path, 0)
+            self.text = result["text"]
+            self.mapping_data = result["mapping"]
             self.controller.set_text_transcription(self.text)
+            self.controller.set_mapping_data(self.mapping_data)
+
         else:
             print(("valider"))
             self.text = self.controller.get_text_transcription()
+            self.mapping_data = self.controller.get_mapping_data()
 
         self.layout = QHBoxLayout(self)
         self.layout.setAlignment(Qt.AlignCenter)
         self.audio_player = AudioPlayer(self.path)
+        self.audio_player.position_en_secondes.connect(self.on_position_changed)
 
         self.feuille = Feuille(
             "./assets/SVG/icone_file_text.svg", "Correction", "Valider", "Annuler",
@@ -50,12 +57,19 @@ class CorrectionTranscription(QWidget):
         )
         self.feuille.setObjectName("feuille")
         self.feuille.text_edit.setReadOnly(False)
-
+        self.audio_player.position_en_secondes
         self.layout.addWidget(self.audio_player)
         self.layout.setSpacing(10)
         self.layout.addWidget(self.feuille)
 
         self.setLayout(self.layout)
+
+    def on_position_changed(self, current_time_s):
+        """
+        Slot: appelé par le signal du AudioPlayer.
+        On surligne le segment du texte correspondant à current_time_s (secondes).
+        """
+        self.feuille.mettre_a_jour_surlignage(current_time_s, self.mapping_data)
 
     def resizeEvent(self, event):
         """
