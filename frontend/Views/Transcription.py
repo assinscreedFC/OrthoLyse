@@ -23,7 +23,13 @@ class Transcription(QWidget):
 
         self.layout = QHBoxLayout(self)
         self.layout.setAlignment(Qt.AlignCenter)
-        self.audio_player = AudioPlayer(self.path)
+
+        if self.controller.get_audio_player():
+            self.audio_player = self.controller.get_audio_player()
+        else:
+            self.audio_player = AudioPlayer(self.path)
+            self.controller.set_audio_player(self.audio_player)
+
         self.audio_player.position_en_secondes.connect(self.on_position_changed)
 
         self.feuille = Feuille("./assets/SVG/icone_file_text.svg", "Transcription", "Transcrire", "Coriger",

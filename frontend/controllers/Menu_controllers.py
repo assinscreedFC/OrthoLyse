@@ -18,6 +18,7 @@ class NavigationController:
             cls._instance = super(NavigationController, cls).__new__(cls)
             cls._instance.main_window = None  # RÃ©fÃ©rence Ã  MainWindow
             cls._instance.central_widget = None  # RÃ©fÃ©rence au QStackedWidget
+            cls._instance.position=None
             cls._instance.file_transcription_path = (
                 None  # RÃ©fÃ©rence au QStackedWidget
             )
@@ -107,6 +108,18 @@ class NavigationController:
                 self.central_widget.setCurrentWidget(
                     self.main_window.correction_tanscription
                 )
+
+    def set_audio_player(self, position):
+        self.position=position
+
+    def get_audio_player(self):
+        return self.position
+
+    def set_play_pause(self,play):
+        self.play=play
+
+    def get_play_pause(self):
+        return self.play
 
     def set_file_transcription_path(self, file_path):
         self.file_transcription_path = file_path
