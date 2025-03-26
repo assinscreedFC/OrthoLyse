@@ -8,6 +8,12 @@ from PySide6.QtWidgets import QWidget, QSizePolicy, QVBoxLayout, QLabel, QFileDi
 
 from frontend.Widgets.Header import Header
 from frontend.controllers.Menu_controllers import NavigationController
+AUDIO_EXTENSIONS = {
+    ".mp3", ".wav", ".flac", ".aac", ".ogg", ".wma", ".opus",
+    ".alac", ".ape", ".aiff", ".bwf", ".m4a", ".mp2", ".mp1",
+    ".amr", ".dsd", ".caf", ".ra", ".tta", ".voc", ".wv",
+    ".flv", ".webm", ".mkv", ".mp4", ".avi", ".mov", ".3gp"
+}
 
 
 class ImporterAudio(QWidget):
@@ -224,6 +230,11 @@ class ImporterAudio(QWidget):
         if obj == self.dropZone:
             if event.type() == QEvent.DragEnter:
                 if event.mimeData().hasUrls():
+                    print([u.toLocalFile() for u in event.mimeData().urls()])
+                    fichier=[u.toLocalFile() for u in event.mimeData().urls()]
+                    fich,ex=os.path.splitext(fichier[0])
+                    print(os.path.splitext(fichier[0]))
+                    print(ex in AUDIO_EXTENSIONS )
                     event.acceptProposedAction()
                     return True  # Événement traité
             elif event.type() == QEvent.Drop:
@@ -238,7 +249,7 @@ class ImporterAudio(QWidget):
     def open_file_dialog(self):
         file_dialog = QFileDialog()
         file_path, _ = file_dialog.getOpenFileName(self, "Sélectionner un fichier audio", "",
-                                                   "Fichiers audio (*.mp3 *.wav *.flac)")
+                                                   "Fichiers audio (*.mp3 *.wav *.flac *.aac *.ogg *.wma *.opus *.alac *.ape *.aiff *.bwf *.m4a *.mp2 *.mp1 *.amr *.dsd *.caf *.ra *.tta *.voc *.wv)")
         if file_path:
             print("Fichier sélectionné :", file_path)  # Gestion du fichier sélectionné
             print("\nnom:",os.path.basename(file_path))
