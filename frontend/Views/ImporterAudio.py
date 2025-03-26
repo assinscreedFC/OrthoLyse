@@ -4,7 +4,7 @@ from PySide6.QtCore import Qt, QEvent
 from PySide6.QtGui import QPixmap, QPainter, QCursor, QFont, QIcon
 from PySide6.QtSvgWidgets import QSvgWidget
 from PySide6.QtWidgets import QWidget, QSizePolicy, QVBoxLayout, QLabel, QFileDialog, QHBoxLayout, QLineEdit, \
-    QPushButton
+    QPushButton, QApplication
 
 from frontend.Widgets.Header import Header
 from frontend.controllers.Menu_controllers import NavigationController
@@ -226,23 +226,38 @@ class ImporterAudio(QWidget):
         self.right_boutton.clicked.connect(lambda: self.controller.change_page("Transcription"))
 
     def eventFilter(self, obj, event):
-        # Vérifie si l'objet est la zone de dépôt
         if obj == self.dropZone:
             if event.type() == QEvent.DragEnter:
                 if event.mimeData().hasUrls():
-                    print([u.toLocalFile() for u in event.mimeData().urls()])
-                    fichier=[u.toLocalFile() for u in event.mimeData().urls()]
-                    fich,ex=os.path.splitext(fichier[0])
-                    print(os.path.splitext(fichier[0]))
-                    print(ex in AUDIO_EXTENSIONS )
-                    event.acceptProposedAction()
+                    files = [u.toLocalFile() for u in event.mimeData().urls()]
+                    if any(os.path.splitext(f)[1].lower() in AUDIO_EXTENSIONS for f in files):
+                        QApplication.restoreOverrideCursor()  # Rétablir le curseur normal si valide
+                        event.acceptProposedAction()
+                    else:
+                        event.accept()
+                        QApplication.setOverrideCursor(Qt.ForbiddenCursor)  # Curseur interdit
+
                     return True  # Événement traité
+
+            elif event.type() == QEvent.DragLeave:
+                QApplication.restoreOverrideCursor()  # Rétablir le curseur normal à la sortie
+
             elif event.type() == QEvent.Drop:
                 files = [u.toLocalFile() for u in event.mimeData().urls()]
-                print("Fichier déposé:", files[0])  # Gestion du fichier déposé
-                print("\nnom:", os.path.basename(files[0]))
-                self.reload_in_drop_zone(files[0])
-                self.controller.set_file_transcription_path(files[0])
+                valid_files = [f for f in files if os.path.splitext(f)[1].lower() in AUDIO_EXTENSIONS]
+                print(valid_files)
+                if valid_files:
+                    file_path = valid_files[0]  # Prend le premier fichier audio valide
+                    print("✅ Fichier déposé:", file_path)
+                    print("\nnom:", os.path.basename(file_path))
+                    self.reload_in_drop_zone(file_path)
+                    self.controller.set_file_transcription_path(file_path)
+                    QApplication.restoreOverrideCursor()
+                else:
+                    print("❌ Aucun fichier audio valide détecté.")
+                    QApplication.restoreOverrideCursor()
+
+                    # Toujours rétablir le curseur
                 return True  # Événement traité
         return super().eventFilter(obj, event)
 
