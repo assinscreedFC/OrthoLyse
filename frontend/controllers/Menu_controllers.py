@@ -67,11 +67,6 @@ class NavigationController:
                 self.central_widget.setCurrentWidget(self.main_window.stopenregistrer)
             elif page_name == "Transcription":
 
-                if self.get_text_transcription() is None:
-                    result = transcription(self.file_transcription_path, 0)
-                    self.set_text_transcription(result["text"])
-                    self.set_mapping_data(result["mapping"])
-                    self.set_first_mapping(result["mapping"])
                 # Vérifier si la page existe déjà
                 if (
                     hasattr(self.main_window, "transcription")

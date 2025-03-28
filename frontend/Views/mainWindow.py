@@ -49,7 +49,9 @@ class MyWindow(QMainWindow):
         self.setWindowIcon(QIcon("icon.png"))
         self.setMinimumSize(642, 450)
         self.resize(642, 450)
-        self.setStyleSheet("color:white;")
+        self.setStyleSheet("color:#000;")
+        self.setObjectName("main")
+        self.setStyleSheet("#main { background-color: #EAFBFF; }")
 
         # élément pour empiler les vues (widgets) et permettre la navigation
         self.qStackwidget = QStackedWidget()
@@ -80,8 +82,8 @@ class MyWindow(QMainWindow):
         self.label_fond = QLabel(self)
         self.label_fond.setAlignment(Qt.AlignCenter)
 
-        self.pixmap = QPixmap("./assets/image/background.jpg")
-        self.ajuster_image()
+        #self.pixmap = QPixmap("./assets/image/background.jpg")
+        #self.ajuster_image()
 
         # Connexion de l'événement de redimensionnement à la mise à jour de l'image
         self.resizeEvent = self.on_resize
@@ -178,4 +180,4 @@ class MyWindow(QMainWindow):
 
     def on_resize(self, event):
         """Met à jour l'image de fond lors du redimensionnement de la fenêtre"""
-        self.ajuster_image()
+        #self.ajuster_image()

@@ -159,26 +159,42 @@ class AudioPlayer(QWidget):
         button.setIconSize((self.size() / sizeicone))
         button.setFixedSize(sizebutton, sizebutton)
         button.setCursor(Qt.PointingHandCursor)
-        button.setStyleSheet(f"""
-                            QPushButton {{
-                                background-color: #fff;
-                                border-radius: {(sizebutton // 2) - 1}px;
-                            }}
-                            QPushButton:hover {{
-                                background-color: #CCC;
-                            }}
-                                QPushButton::menu-indicator {{ width: 0; height: 0; }}
+        if(file_path=="./assets/SVG/play_arrow.svg"):
+            button.setObjectName("play")
+            button.setStyleSheet(f"""
+                                QPushButton#play {{
+                                    background-color: #007299;
+                                    border-radius: {(sizebutton // 2) - 1}px;
+                                }}
+                                
+                                QPushButton#play::menu-indicator {{ width: 0; height: 0; }}
+    
+                            """)
+        else:
+            button.setObjectName("autre")
+            button.setStyleSheet(f"""
+                QPushButton#autre {{
+                    background-color: #fff;
+                    border-radius: {(sizebutton // 2) - 1}px;
+                }}
+                QPushButton#autre:hover {{
+                    background-color: #CCC;
+                }}
+                QPushButton#autre::menu-indicator {{
+                    width: 0;
+                    height: 0;
+                }}
+            """)
 
-                        """)
         return button
     def bottom_part(self):
         bottom_layout = QHBoxLayout()
         bottom_layout.setSpacing(30)
         bottom_layout.setAlignment(Qt.AlignCenter)
         self.rewind_button = self.boutton("./assets/SVG/replay-10.svg")
-        self.play_pause_button = self.boutton("assets/SVG/play_arrow.svg")
-        self.forward_button = self.boutton("assets/SVG/forward-10.svg")
-        self.more_boutton = self.boutton("assets/SVG/more.svg", 4, 30)
+        self.play_pause_button = self.boutton("./assets/SVG/play_arrow.svg")
+        self.forward_button = self.boutton("./assets/SVG/forward-10.svg")
+        self.more_boutton = self.boutton("./assets/SVG/more.svg", 4, 30)
         self.more_boutton.setParent(self)
         self.more_boutton.raise_()
         self.speed_menu = QMenu()
