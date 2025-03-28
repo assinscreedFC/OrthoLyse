@@ -257,11 +257,33 @@ class ImporterAudio(QWidget):
         self.right_boutton.clicked.connect(self.back_exe)
 
     def back_exe(self):
-        # Créez le QRunnable pour exécuter la transcription dans un thread séparé
+        # Récupérer le chemin du fichier audio actuellement sélectionné
+        current_file = self.controller.get_file_transcription_path()
+
+        # Si une transcription est déjà en cours, on ne fait rien
+
+
+        # Si le fichier n'a pas changé depuis la dernière transcription, on ne relance pas
+        if hasattr(self, "last_file_path") and self.last_file_path == current_file:
+            print("Le fichier audio n'a pas changé.")
+            return
+
+        # Mémoriser le fichier actuel et indiquer qu'une transcription est en cours
+        self.last_file_path = current_file
+        self.transcription_in_progress = True
+
+        # Créer le QRunnable pour exécuter la transcription dans un thread séparé
         runnable = TranscriptionRunnable(self.controller)
 
-        runnable.signals.fin.connect(lambda: self.controller.change_page("Transcription"))
-        # Exécutez le QRunnable dans le QThreadPool
+        # Fonction à appeler une fois la transcription terminée
+        def on_transcription_finished():
+            self.transcription_in_progress = False
+            self.controller.change_page("Transcription")
+
+        # Connecter le signal "fin" à la fonction de fin
+        runnable.signals.fin.connect(on_transcription_finished)
+
+        # Exécuter le QRunnable dans le QThreadPool
         QThreadPool.globalInstance().start(runnable)
 
     def eventFilter(self, obj, event):
@@ -296,13 +318,10 @@ class ImporterAudio(QWidget):
         file_dialog.setFileMode(QFileDialog.ExistingFile)
 
         # Définit les types de fichiers audio acceptés
-        filter_str = """Fichiers audio (*.mp3 *.wav *.flac *.aac *.ogg *.wma *.opus
-            *.alac *.ape *.aiff *.bwf *.m4a *.mp2 *.mp1
-            *.amr *.dsd *.caf *.ra *.tta *.voc *.wv
-            *.flv *.webm *.mkv *.mp4 *.avi *.mov *.3gp)"""
+        filter_str = "Fichiers audio (*.mp3 *.wav *.flac *.aac *.ogg *.wma *.opus *.alac *.ape *.aiff *.bwf *.m4a *.mp2 *.mp1 *.amr *.dsd *.caf *.ra *.tta *.voc *.wv *.flv *.webm *.mkv *.mp4 *.avi *.mov *.3gp)"
 
         # Ouvre le dialogue de sélection de fichier
-        file_path, _ = file_dialog.getOpenFileName(self, "Sélectionner un fichier audio", "", filter_str)
+        file_path, _ = file_dialog.getOpenFileName(self, "Sélectionner un fichier audio", "./", filter_str)
 
         if file_path:
                 print("Fichier sélectionné :", file_path)  # Gestion du fichier sélectionné
@@ -469,7 +488,7 @@ class TranscriptionRunnable(QRunnable):
 
     def run(self):
         # Change le curseur en mode de chargement sur le widget central
-        QApplication.setOverrideCursor(Qt.WaitCursor)
+        self.controller.central_widget.setCursor(Qt.WaitCursor)
 
         # Exécute la transcription
         result = transcription(self.controller.get_file_transcription_path(), 0)
