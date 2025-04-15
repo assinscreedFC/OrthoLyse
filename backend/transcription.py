@@ -85,7 +85,7 @@ def extraire_mapping_depuis_segments(combined_segments):
     last_word_end = 0.0  # Dernier timestamp de fin traité
 
     for seg in combined_segments:
-        seg_text = seg.get("text", "").strip()
+        seg_text = seg.get("text", "")
         seg_start = seg.get("start", 0.0)
         seg_end = seg.get("end", 0.0)
 
@@ -99,7 +99,7 @@ def extraire_mapping_depuis_segments(combined_segments):
             i = 0
             while i < len(word_ts):
                 token = word_ts[i]
-                word = token.get("word", "").strip()
+                word = token.get("word", "")
                 # Si le prochain token commence par une apostrophe, on combine
                 if i + 1 < len(word_ts) and word_ts[i + 1].get("word", "").startswith("'"):
                     next_token = word_ts[i + 1]
@@ -117,7 +117,7 @@ def extraire_mapping_depuis_segments(combined_segments):
 
             # Utiliser les timestamps combinés
             for token in combined_word_ts:
-                word = token.get("word", "").strip()
+                word = token.get("word", "")
                 # Calcul du temps absolu en utilisant l'offset du segment
                 word_start = adjusted_start + (token.get("start", 0.0) - seg_start)
                 word_end = adjusted_start + (token.get("end", 0.0) - seg_start)
@@ -141,7 +141,7 @@ def extraire_mapping_depuis_segments(combined_segments):
                 current_index += len(word) + 1
                 last_word_end = word_end
 
-    return texte_global.strip(), mapping_data
+    return texte_global, mapping_data
 
 
 def ajuster_mapping(ancien_text, nouveau_text, ancien_mapping):
@@ -218,7 +218,7 @@ def ajuster_mapping(ancien_text, nouveau_text, ancien_mapping):
 
 
 
-def transcription(file_path, mdl):
+def transcription(file_path, mdl=3):
     """
     Fonction qui retourne un dictionnaire avec le texte complet et le mapping des mots,
     avec les timestamps au niveau des mots.
@@ -281,7 +281,7 @@ def transcription(file_path, mdl):
             combined_segments.append({
                 "start": seg["start"],
                 "end": seg["end"],
-                "text": seg["text"].strip(),
+                "text": seg["text"],
                 "word_timestamps": seg.get("words", [])
             })
     print(results)

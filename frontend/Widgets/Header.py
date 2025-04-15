@@ -55,7 +55,7 @@ class Header(QWidget):
         """
         Change de page pour afficher les paramètres lorsque le bouton des paramètres est cliqué.
         """
-        self.controller.change_page("Settings")
+        self.controller.change_page("Parametres")
 
     def change_page(self):
         """

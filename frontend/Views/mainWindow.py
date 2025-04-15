@@ -22,7 +22,6 @@ from frontend.Views.Home import Home
 from frontend.Views.ChoixDeMoteurs import ChoixDeMoteurs
 from frontend.Views.Informations import Informations
 from frontend.Views.ImporterAudio import ImporterAudio
-from frontend.Views.Menu import Menu
 from frontend.Views.ModeDeChargement import ModeDeChargement
 from frontend.Views.HelpTranscription import HelpTranscription
 from frontend.Views.Prenregistrement import Prenregistrement
@@ -81,18 +80,17 @@ class MyWindow(QMainWindow):
         self.toolbar = QToolBar("Menu")
         self.toolbar.setMovable(False)
         self.addToolBar(Qt.TopToolBarArea, self.toolbar)
-        self.toolbar.setStyleSheet("background-color: rgba(0, 0, 0, 1);")
+        self.toolbar.setStyleSheet("color: #007299; background:rgba(0, 0, 0, 0);text-align:right")
 
         # Actions de la barre d'outils
         actions = [
             ("Accueil", "Home"),
-            ("Menu", "Menu"),
+            ("Enregistrer", "Prenregistrer"),
             ("Import", "ImporterAudio"),
-            ("Settings", "Settings"),
+            ("Parametres", "Parametres"),
             ("Info", "Information"),
-            ("Transcription", "Transcription"),
-            ("CTrans", "CTanscription"),
-            ("Enregistrer", "Enregistrer")
+            ("Metrique", "Metrique")
+
         ]
 
         for label, page in actions:

@@ -51,10 +51,12 @@ class Home(QWidget):
         """
         Affiche le texte central de l'écran d'accueil pour attirer l'attention sur le produit.
         """
+
         self.middle_text_label = QLabel(
-            "Premier analyseur<br> de la complexité <br>syntaxique sur le<br> marché <b>francophone</b>", self)
+            "Premier analyseur<br> de la complexité <br>syntaxique sur le<br> marché <b><font color=#007299>francophone</font></b>", self)
         self.middle_text_label.setWordWrap(True)
         self.middle_text_label.setFont(self.font)
+        self.middle_text_label.setStyleSheet("color:black;")
 
         self.label_fond = QLabel(self)
         self.label_fond.setAlignment(Qt.AlignCenter)
@@ -75,7 +77,7 @@ class Home(QWidget):
         """
         self.bottom_text_label = QLabel(
             "Chargez un audio pour calculer les métriques linguistiques :", self)
-        self.bottom_text_label.setStyleSheet("color: #02607E;")
+        self.bottom_text_label.setStyleSheet("color: #007299;")
 
         layoutV = QVBoxLayout()
         layoutV.addWidget(self.bottom_text_label)
@@ -125,7 +127,7 @@ class Home(QWidget):
         info_btn = QPushButton()
         info_btn.setIcon(iconInfo)
         info_btn.setIconSize(QSize(38, 38))
-        info_btn.setStyleSheet("border: 0px;")
+        info_btn.setStyleSheet("color:#007299;border: 0px;")
         info_btn.setCursor(Qt.PointingHandCursor)
         info_btn.clicked.connect(self.view_info)
         layoutH.addStretch(1)

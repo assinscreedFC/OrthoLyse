@@ -70,10 +70,8 @@ class Feuille(QWidget):
         self.main_layout.addLayout(label_layout)
 
     def body(self):
-        if self.controller.get_text_transcription() is not None:
-            self.text_edit = QPlainTextEdit(self.controller.get_text_transcription())
-        else:
-            self.text_edit = QPlainTextEdit("")
+        self.text_edit = QPlainTextEdit(self.plain_text)
+
         self.old_text = self.text_edit.toPlainText()
         self.text_edit.textChanged.connect(lambda: (self.controller.change_text(
             self.text_edit.toPlainText()),
@@ -104,13 +102,15 @@ class Feuille(QWidget):
         if self.right_butto_text=="Coriger":
             self.right_boutton.clicked.connect(lambda :self.controller.change_page("CTanscription"))
         elif self.right_butto_text=="Annuler":
-            self.controller.set_text_transcription(self.old_text)
-            self.right_boutton.clicked.connect(lambda :self.controller.change_page("Transcription"))
+
+            self.right_boutton.clicked.connect(lambda :(self.controller.change_page("Transcription"),self.controller.set_text_transcription(self.old_text)))
         if self.left_button_text=="Valider":
             self.controller.set_text_transcription(self.text_edit.toPlainText())
             self.left_boutton.clicked.connect(
                 lambda: (self.controller.set_text_transcription(self.text_edit.toPlainText()),
                          self.controller.change_page("Transcription")))
+        if self.left_button_text == "Analyser":
+            self.left_boutton.clicked.connect(lambda: self.controller.change_page("Metrique"))
 
         label_layout = QHBoxLayout()
         label_layout.addStretch(1)

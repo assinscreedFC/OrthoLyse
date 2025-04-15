@@ -166,3 +166,16 @@ backend/temp_alignment_output/corpus/videoplayback.lab
 backend/temp_alignment_output/corpus/videoplayback.mp4
 backend/test.py
 backend/test.py
+Untitled.ipynb
+train_lemmes.tsv
+Lexique383
+modele_finetune
+output
+projet_lemmatiseur
+train_ia.ipynb
+*.ipynb
+test_lemmes.tsv
+*.ipynb
+projet_lemmatiseur/config.cfg
+train.ipynb
+train_ia.ipynb
