@@ -15,10 +15,10 @@ import os
 
 
 # Ouvrir le fichier JSON en mode lecture
-with open(os.path.abspath("../backend/suffixe.json"), 'r', encoding='utf-8') as fichier:
+with open(os.path.abspath("./suffixe.json"), 'r', encoding='utf-8') as fichier:
     # Charger le contenu du fichier JSON
     suffixes = json.load(fichier)
-with open(os.path.abspath("../backend/prefixe.json"), 'r', encoding='utf-8') as fichier:
+with open(os.path.abspath("./prefixe.json"), 'r', encoding='utf-8') as fichier:
     prefixes = json.load(fichier)
 
 class Analyse_NLTK:

@@ -2,35 +2,37 @@ import sys
 import os
 import json
 from PySide6.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QHBoxLayout, QRadioButton, QLineEdit, \
-    QPushButton, QGroupBox, QGridLayout, QSizePolicy,QMessageBox
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QFont, QIntValidator
+    QPushButton, QGroupBox, QGridLayout, QSizePolicy, QMessageBox, QGraphicsDropShadowEffect
+from PySide6.QtCore import Qt, QSize
+from PySide6.QtGui import QFont, QIntValidator, QColor, QIcon
 from frontend.controllers.Menu_controllers import NavigationController
+from frontend.controllers.Settings_controller import SettingsController
 
 
 class Parametres(QWidget):
     def __init__(self):
         super().__init__()
-        # self.setMinimumSize(642,450)
         self.controller = NavigationController()
+        self.settings_controller = SettingsController()
         self.font_bold, self.font_family_bold = self.controller.set_font('./assets/Fonts/Poppins/Poppins-SemiBold.ttf')
         self.font_regular, self.font_family_regular = self.controller.set_font(
             './assets/Fonts/Poppins/Poppins-Regular.ttf')
         self.font_medium, self.font_family_medium = self.controller.set_font(
             './assets/Fonts/Poppins/Poppins-Medium.ttf')
 
-
         # creer les deux sections
+        self.icone=self.creerIcone()
         self.sections = self.creerSections()
         self.bouton = self.creerBoutonValider()
 
         # ce layout va aligner verticalement les deux sections de paramètres et le boutoun valider
         main_layout = QVBoxLayout()
+        main_layout.addLayout(self.icone)
         main_layout.addStretch(1)
         main_layout.addLayout(self.sections)
         main_layout.addStretch(1)
         main_layout.addLayout(self.bouton)
-        main_layout.addStretch(1)
+
 
         self.setLayout(main_layout)
 
@@ -42,7 +44,7 @@ class Parametres(QWidget):
         self.btnValider = QPushButton("Valider")
         self.btnValider.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.btnValider.setFont(self.font_medium)
-        self.btnValider.setMinimumSize(85,30)
+        self.btnValider.setMinimumSize(85, 30)
         self.btnValider.setMaximumSize(120, 36)
         self.btnValider.setCursor(Qt.PointingHandCursor)
         self.btnValider.setStyleSheet("""
@@ -103,20 +105,21 @@ class Parametres(QWidget):
         texte_layout.addStretch(1)
 
         # creer les boutons radio
-        base_radio = QRadioButton("Base \nBon compromis entre rapidité et précision.")
-        small_radio = QRadioButton("Small\nÉquilibre entre vitesse et qualité.")
-        medium_radio = QRadioButton("Medium\nHaute précision.")
-        turbo_radio = QRadioButton("Turbo\nVitesse et haute précision.")
+        base_radio = QRadioButton("Base \nRapide, basique.")
+        small_radio = QRadioButton("Small\nÉquilibré, léger.")
+        medium_radio = QRadioButton("Medium\nPrécis, fiable.")
+        turbo_radio = QRadioButton("Turbo\nUltra-rapide, précis.")
 
         # aligner le texte et les boutons verticalement
         self.modeles_layout = QVBoxLayout()
-        self.modeles_layout.setContentsMargins(20, 0, 20, 0)
+        self.modeles_layout.addSpacing(8)
         self.modeles_layout.addLayout(texte_layout)
         self.modeles_layout.addStretch(2)
         self.btns = [base_radio, small_radio, medium_radio, turbo_radio]
 
         for btn in self.btns:
-            btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+            btn.setCursor(Qt.PointingHandCursor)
+            btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             btn.setMinimumSize(180, 45)
             btn.setStyleSheet("color:black;")
             btn.setFont(self.font_regular)
@@ -125,6 +128,8 @@ class Parametres(QWidget):
 
         modeles_section = QGroupBox()
         modeles_section.setLayout(self.modeles_layout)
+        modeles_section.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
         # personnaliser les QGroupBox
         self.styleSection(modeles_section)
 
@@ -145,7 +150,7 @@ class Parametres(QWidget):
         notice = QLabel(
             "Choisissez les valeurs normales  pour chacune des métriques suivantes selon la durée de votre enregistrement :")
         notice.setFont(self.font_regular)
-        notice.setStyleSheet("color:#b5b5b5;")
+        notice.setStyleSheet("color:grey;")
         notice.setWordWrap(True)
 
         # creer les metriques
@@ -154,8 +159,8 @@ class Parametres(QWidget):
 
         # les étiquettes des métriques à configurer
         labels = [
-            "Durée :", "Nombre de mots :", "Nombre de mots différents :",
-            "Nombre d’énoncés :", "Nombre de morphèmes :", "Nombre de morphèmes par énoncé :", "Nombre de lemmes :"
+            "Durée  : ", "Mots  : ", "Mots différents  : ",
+            "Énoncés  : ", "Morphèmes  : ", "Morphèmes par énoncé  : ", "Lemmes  : "
         ]
 
         # pour pouvoir récupérer les valeurs saisies
@@ -190,24 +195,27 @@ class Parametres(QWidget):
         metriques_contrainer.addLayout(metriques_layout)
 
         # aligner tous les layout verticalement
-        normes_metrique_layout = QVBoxLayout()
-        normes_metrique_layout.setContentsMargins(30, 0, 30, 0)
-        normes_metrique_layout.addLayout(texte_layout)
-        normes_metrique_layout.addStretch(1)
-        normes_metrique_layout.addWidget(notice)
-        normes_metrique_layout.addStretch(1)
-        normes_metrique_layout.addLayout(metriques_contrainer)
-        normes_metrique_layout.addStretch(1)
+        self.normes_metrique_layout = QVBoxLayout()
+        self.normes_metrique_layout.addSpacing(8)
+        #normes_metrique_layout.setContentsMargins(30, 0, 30, 0)
+        self.normes_metrique_layout.addLayout(texte_layout)
+        self.normes_metrique_layout.addStretch(1)
+        self.normes_metrique_layout.addWidget(notice)
+        self.normes_metrique_layout.addStretch(1)
+        self.normes_metrique_layout.addLayout(metriques_contrainer)
+        self.normes_metrique_layout.addStretch(1)
 
         metriques_section = QGroupBox()
-        metriques_section.setLayout(normes_metrique_layout)
+        metriques_section.setLayout(self.normes_metrique_layout)
+        metriques_section.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Preferred)
+
         # personnaliser les QGroupBox
         self.styleSection(metriques_section)
+
         return metriques_section
 
     def styleSection(self, section):
         section.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        section.setMinimumSize(380, 450)
         section.setStyleSheet(f"""QGroupBox{{
                                     background:#fff;
                                     border-radius:15px;
@@ -224,41 +232,33 @@ class Parametres(QWidget):
         """)
 
     def resizeEvent(self, event):
-        largeur=self.width()
+        largeur = self.width()
+
         # Calcul dynamique avec des bornes
         largeur_btn = max(85, min(largeur // 8, 120))
         hauteur_btn = max(30, min(largeur // 30, 36))
 
         self.btnValider.setFixedSize(largeur_btn, hauteur_btn)
-        if self.width() > 940:
-            self.modeles.setFixedSize(466, 450)
-            self.metriques.setFixedSize(466, 450)
-            self.modeles_layout.setContentsMargins(30, 0, 30, 0)
-        else:
-            self.modeles.setFixedSize(280, 350)
-            self.metriques.setFixedSize(317, 350)
-            self.modeles_layout.setContentsMargins(20, 0, 20, 0)
+        if self.width() > 940 and self.height() > 750:
+            self.modeles.setMinimumSize(466, 450)
+            self.metriques.setMinimumSize(466, 450)
+            self.modeles_layout.setContentsMargins(30,0,30,10)
+            self.normes_metrique_layout.setContentsMargins(20,0,20,10)
 
+
+        else:
+            self.modeles.setMinimumSize(280, 310)
+            self.metriques.setMinimumSize(317, 310)
+
+
+        self.styleSection(self.modeles)
+        self.styleSection(self.metriques)
         self.adjustFonts()
 
     def chargerValeurs(self):
 
-        chemin_fichier = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "settings.json")
-        print(chemin_fichier)
-
-        # Normaliser le chemin (Windows/Linux/Mac)
-        chemin_fichier = os.path.normpath(chemin_fichier)
-
-        if not os.path.exists(chemin_fichier):
-            print("Erreur : Fichier JSON non trouvé !")
-            return
-
-        # ouvrir le fichier en mode lecture
-        with open(chemin_fichier, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            # charger les valeurs des metriques
-            metriques = data.get("ratio_metrique", {})
-
+        try:
+            metriques = self.settings_controller.get_metriques()
             champs = [
                 "duree", "nbrMot", "motDif", "nbrEnonce",
                 "morpheme", "morphemeEnonce", "lemme"
@@ -268,49 +268,29 @@ class Parametres(QWidget):
                 if champ in metriques and i < len(self.inputs):
                     self.inputs[i].setText(str(metriques[champ]))
 
-                # charger les valeurs du modele
-                # Charger et sélectionner le modèle de transcription
-                model_whisper = data.get("modelWhisper", 0)
-                if model_whisper == 0:
-                    self.btns[0].setChecked(True)
-                elif model_whisper == 1:
-                    self.btns[1].setChecked(True)
-                elif model_whisper == 2:
-                    self.btns[2].setChecked(True)
-                elif model_whisper == 3:
-                    self.btns[3].setChecked(True)
+            # modèle
+            model_whisper = self.settings_controller.get_model_whisper()
+            if model_whisper in range(len(self.btns)):
+                self.btns[model_whisper].setChecked(True)
+
+        except Exception as e:
+            print("Erreur lors du chargement :", str(e))
 
     def updateValeurs(self):
 
-        chemin_fichier = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "settings.json")
-        print(chemin_fichier)
-
-        # Normaliser le chemin (Windows/Linux/Mac)
-        chemin_fichier = os.path.normpath(chemin_fichier)
-
-        if not os.path.exists(chemin_fichier):
-            print("Erreur : Fichier JSON non trouvé !")
-            return
 
         try:
-            with open(chemin_fichier, "r", encoding="utf-8") as fichier:
-                data = json.load(fichier)
-
-
-
-            # Récupérer les valeurs saisies dans les QLineEdit
-            ratio_metrique = data.get("ratio_metrique", {})
+            valide = True
+            nouvelles_valeurs = {}
             labels = ["duree", "nbrMot", "motDif", "nbrEnonce",
                       "morpheme", "morphemeEnonce", "lemme"]
-
-            valide = True
 
             for i, label in enumerate(labels):
                 champ = self.inputs[i]
 
                 if champ.hasAcceptableInput():
-                    ratio_metrique[label] = int(champ.text())
-                    champ.setStyleSheet("")  # reset le style
+                    nouvelles_valeurs[label] = int(champ.text())
+                    champ.setStyleSheet("")
                 else:
                     valide = False
                     champ.setToolTip("Veuillez entrer un nombre supérieur à 0")
@@ -323,53 +303,36 @@ class Parametres(QWidget):
                                         }""")
 
             if not valide:
-                return  # 🔒 ne pas aller plus loin si des valeurs sont fausses
-            # mettre a jour la valeur de modeleWhisper dans le json
-            # Mettre à jour le modèle de transcription choisi
-            model_whisper = 0
-            if self.btns[0].isChecked():
-                model_whisper = 0
-            elif self.btns[1].isChecked():
-                model_whisper = 1
-            elif self.btns[2].isChecked():
-                model_whisper = 2
-            elif self.btns[3].isChecked():
-                model_whisper = 3
+                return
 
-            data["modelWhisper"] = model_whisper
-            # Réécrire les données modifiées dans le fichier JSON
-            with open(chemin_fichier, "w", encoding="utf-8") as fichier:
-                json.dump(data, fichier, ensure_ascii=False, indent=4)
+            # modèle choisi
+            model_whisper = next((i for i, btn in enumerate(self.btns) if btn.isChecked()), 0)
 
-            # Afficher le message de succès ici
+            # mise à jour
+            self.settings_controller.set_metriques(nouvelles_valeurs)
+            self.settings_controller.set_model_whisper(model_whisper)
+
             msg = QMessageBox()
             msg.setText("Les paramètres ont été sauvegardés avec succès.")
             msg.setWindowTitle("Succès")
             msg.exec()
 
-        except FileNotFoundError:
-            print("Fichier JSON non trouvé !")
-        except json.JSONDecodeError:
-            print("Erreur lors du chargement du JSON !")
-        except ValueError:
-            print("Erreur : Les valeurs saisies doivent être des nombres entiers.")
-
-
+        except Exception as e:
+            print("Erreur lors de la mise à jour :", str(e))
 
     def adjustFonts(self):
         """Ajuste dynamiquement la taille des polices selon la largeur de la fenêtre"""
 
         # Calcul des tailles basées sur des proportions mesurées
         new_size_regular = int(self.width() * 0.0106)
-        new_size_bold = int(self.width() * 0.0106)
+        new_size_bold = int(self.width() * 0.0149)
         new_size_medium = int(self.width() * 0.0106)
 
         # Limites
-        new_size_regular = max(7, min(new_size_regular, 11))
-        new_size_bold = max(7, min(new_size_bold, 11))
-        new_size_medium = max(7, min(new_size_medium, 11))
+        new_size_regular = max(8, min(new_size_regular, 11))
+        new_size_bold = max(9, min(new_size_bold, 14))
+        new_size_medium = max(10, min(new_size_medium, 12))
 
-        
         self.font_medium.setPointSize(new_size_medium)
         self.font_bold.setPointSize(new_size_bold)
         self.font_regular.setPointSize(new_size_regular)
@@ -388,3 +351,22 @@ class Parametres(QWidget):
                 widget.setFont(self.font_regular)
 
         self.btnValider.setFont(self.font_medium)
+
+    def creerIcone(self):
+        icon=QIcon('./assets/SVG/previousIcon.svg')
+
+
+        #creer le bouton qui va contenir l'icone
+        btn=QPushButton()
+        btn.setIcon(icon)
+        btn.setIconSize(QSize(32,32))
+        btn.setStyleSheet("background:transparent;")
+        btn.clicked.connect(lambda: NavigationController()._instance.go_to_previous_page())
+        btn.setCursor(Qt.PointingHandCursor)
+        #mettre le bouton dans un layout pour l'aligner horizontalement
+        layout=QHBoxLayout()
+        layout.addSpacing(10)
+        layout.addWidget(btn)
+        layout.addStretch(1)
+
+        return layout

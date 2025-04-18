@@ -2,7 +2,7 @@ import importlib
 import os
 import sys
 
-from PySide6.QtGui import QFontDatabase, QFont
+from PySide6.QtGui import QFontDatabase, QFont, Qt, QAction
 
 from backend.transcription import ajuster_mapping, transcription, custom_tokenize
 from frontend.Views.CorrectionTranscription import CorrectionTranscription
@@ -17,19 +17,22 @@ class NavigationController:
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(NavigationController, cls).__new__(cls)
-            cls._instance.main_window = None  # RÃ©fÃ©rence Ã  MainWindow
-            cls._instance.central_widget = None  # RÃ©fÃ©rence au QStackedWidget
+            cls._instance.main_window = None  #référence  MainWindow
+            cls._instance.central_widget = None  # référence au QStackedWidget
+            cls._instance.history = [] #stocker les pages visitées pour revenir à la page précédente
+
             cls._instance.position=None
             cls._instance.file_transcription_path = (
-                None  # RÃ©fÃ©rence au QStackedWidget
+                None  # ref au QStackedWidget
             )
-            cls._instance.text_transcription = None  # RÃ©fÃ©rence au QStackedWidget
+            cls._instance.text_transcription = None  # Reference au QStackedWidget
             cls._instance.transcription_canceled = False
+            cls._instance._dynamic_actions = {}
 
         return cls._instance
 
     def set_main_window(self, main_window, central_widget):
-        """Enregistre la rÃ©fÃ©rence de MainWindow et du QStackedWidget"""
+        """Enregistre la reference de MainWindow et du QStackedWidget"""
         self.main_window = main_window
         self.central_widget = central_widget
 
@@ -41,6 +44,13 @@ class NavigationController:
             self.main_window.menu.show()
 
     def change_page(self, page_name):
+
+        current_widget = self.central_widget.currentWidget()#recupere le
+
+        # Toujours ajouter la page actuelle à l'historique
+        if current_widget:
+            self.history.append(current_widget)
+
         """Affiche la page indiquée en créant le widget dynamiquement si nécessaire et en important le module à la demande."""
         # Dictionnaire associant le nom de la page à un tuple :
         # (nom_attribut, module_path, class_name, [instanciation])
@@ -83,6 +93,13 @@ class NavigationController:
         # Récupérer le tuple associé
         entry = pages[page_name]
         attr_name = entry[0]
+
+        if page_name in ["Metrique", "Transcription"]:
+            if page_name not in self._dynamic_actions:
+                action = QAction(page_name, self.main_window)
+                action.triggered.connect(lambda checked, p=page_name: self.change_page(p))
+                self.main_window.toolbar.addAction(action)
+                self._dynamic_actions[page_name] = action
 
         # Pour les pages devant être recréées systématiquement (Transcription et CTanscription)
         if page_name in ["Transcription", "CTanscription"]:
@@ -129,6 +146,7 @@ class NavigationController:
         self.print_all_widgets()
 
 
+
     def _create_with_params(self, module_path, class_name, *args):
         """Importe dynamiquement le module et crée une instance de la classe avec des arguments."""
         module = importlib.import_module(module_path)
@@ -148,7 +166,7 @@ class NavigationController:
         return self.play
 
     def set_file_transcription_path(self, file_path):
-        self.set_audio_player(None) #si le path change donc ont doit supprimer l'instance de audio player ausssi
+
         self.file_transcription_path = file_path
 
     def get_file_transcription_path(self):
@@ -164,8 +182,21 @@ class NavigationController:
         return self.mapping_data
 
     def get_text_transcription(self):
-        print(self.text_transcription)
         return self.text_transcription
+
+    def disable_toolbar(self):
+        """
+        Désactive la toolbar et change le curseur en interdit.
+        """
+        self.main_window.toolbar.setDisabled(True)  # Désactive la toolbar
+        self.main_window.setCursor(Qt.ForbiddenCursor)  # Définit le curseur comme interdit
+
+    def enable_toolbar(self):
+        """
+        Réactive la toolbar et remet le curseur à son état normal.
+        """
+        self.main_window.toolbar.setEnabled(True)  # Réactive la toolbar
+        self.main_window.setCursor(Qt.ArrowCursor)  # Réinitialise le curseur à la flèche normale
 
     def set_font(self, index):
         absolute_path = os.path.abspath(index)
@@ -200,4 +231,10 @@ class NavigationController:
 
     def get_first_mapping(self):
         return self.first_mapping_data
+
+    #methode pour retourner à la page précédente
+    def go_to_previous_page(self):
+        if self.history:
+            previous_widget = self.history.pop()
+            self.central_widget.setCurrentWidget(previous_widget)
 

@@ -70,8 +70,10 @@ class Feuille(QWidget):
         self.main_layout.addLayout(label_layout)
 
     def body(self):
-        self.text_edit = QPlainTextEdit(self.plain_text)
-
+        if self.controller.get_text_transcription() is not None:
+            self.text_edit = QPlainTextEdit(self.controller.get_text_transcription())
+        else:
+            self.text_edit = QPlainTextEdit("")
         self.old_text = self.text_edit.toPlainText()
         self.text_edit.textChanged.connect(lambda: (self.controller.change_text(
             self.text_edit.toPlainText()),
@@ -100,15 +102,18 @@ class Feuille(QWidget):
         self.left_boutton=self.boutton( self.widget,self.left_button_text,"#FFFFFF","#15B5D4","#15B5D4")
 
         if self.right_butto_text=="Coriger":
-            self.right_boutton.clicked.connect(lambda :self.controller.change_page("CTanscription"))
+            self.right_boutton.clicked.connect(lambda :(self.controller.change_page("CTanscription"),self.controller.get_audio_player().toggle_play_pause() if self.controller.get_audio_player().is_playing==False else None))
         elif self.right_butto_text=="Annuler":
 
-            self.right_boutton.clicked.connect(lambda :(self.controller.change_page("Transcription"),self.controller.set_text_transcription(self.old_text)))
+            self.right_boutton.clicked.connect(lambda :(self.controller.set_text_transcription(self.old_text),
+                                                        self.controller.change_page("Transcription"),
+                                                        self.controller.get_audio_player().toggle_play_pause() if self.controller.get_audio_player().is_playing==False else None))
         if self.left_button_text=="Valider":
             self.controller.set_text_transcription(self.text_edit.toPlainText())
             self.left_boutton.clicked.connect(
                 lambda: (self.controller.set_text_transcription(self.text_edit.toPlainText()),
-                         self.controller.change_page("Transcription")))
+                         self.controller.change_page("Transcription"),
+                         self.controller.get_audio_player().toggle_play_pause() if self.controller.get_audio_player().is_playing==False else None))
         if self.left_button_text == "Analyser":
             self.left_boutton.clicked.connect(lambda: self.controller.change_page("Metrique"))
 

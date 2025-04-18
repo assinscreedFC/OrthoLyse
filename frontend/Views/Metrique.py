@@ -24,7 +24,6 @@ class Metrique(QWidget):
         self.layout = QVBoxLayout(self) #layout principal
         self.layout.setAlignment(Qt.AlignCenter)
 
-        self.top()
         self.layout.addStretch(1)
         self.container()
         self.layout.addStretch(1)
@@ -51,20 +50,6 @@ class Metrique(QWidget):
         self.layout.addLayout(grid)
         self.timer.start(20)
 
-    def top(self):
-        """place un bouton qui nous permet de revenir a la home page"""
-        icon = QIcon(QPixmap("./assets/SVG/home.svg"))
-        btn = QPushButton()
-        btn.setIcon(icon)
-        btn.setIconSize(QSize(32, 32))
-        btn.setStyleSheet('background-color: transparent;')
-        btn.setCursor(Qt.PointingHandCursor)
-        btn.clicked.connect(self.return_home)
-
-        hbox = QHBoxLayout()
-        hbox.addWidget(btn)
-        hbox.addStretch(2)
-        self.layout.addLayout(hbox)
 
     def bottom(self):
         """met en place un bouton 'Exporter' en bas de page"""

@@ -7,7 +7,7 @@ import os
 
 
 # Ouvrir le fichier settings en mode lecture
-with open(os.path.abspath("./settings.json"), 'r', encoding='utf-8') as fichier:
+with open("./settings.json", 'r', encoding='utf-8') as fichier:
     # Charger le contenu du fichier JSON
     parametres = json.load(fichier)
 

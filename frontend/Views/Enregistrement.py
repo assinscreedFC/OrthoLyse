@@ -6,15 +6,13 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QLabel,
     QHBoxLayout,
-    QLineEdit,
-    QPushButton,
 )
 from frontend.Views.Prenregistrement import Prenregistrement
+from frontend.Views.base.base_enregistrement import BaseEnregistrement
 from frontend.controllers.Record_controllers import RecordeController
+from frontend.Widgets.AudioBar import AudioBar
 
-# classe mere des deux autres classes enregistrement et ecoute
-
-class Enregistrement(Prenregistrement):
+class Enregistrement(BaseEnregistrement):
     def __init__(self):
         super().__init__() # utilisation du constructeur du parent sans modification
         self.recController = RecordeController(self.audio_filename)
@@ -23,7 +21,10 @@ class Enregistrement(Prenregistrement):
     def showEvent(self, event):
         """ Cet event permet de lancer l'enregistrement une fois la page charger"""
         super().showEvent(event)
-        self.recController.start_recording()
+        # connecter ici si pas déjà fait
+        self.recController.start_recording(self.audioBar)
+        self.audioBar.start_timer()
+
 
     def container(self):
         self.box = QWidget(self)
@@ -56,19 +57,59 @@ class Enregistrement(Prenregistrement):
         layoutV.setContentsMargins(0, 0, 0, 0)
         layoutV.setSpacing(0)
 
-        self.layoutPrincipal = super().set_body_elements(
-                "En cours d'enregistrement ...", "./assets/SVG/ongoing.svg")
+        self.layoutPrincipal = self.set_body_elements(
+                "En cours d'enregistrement ...")
 
         layoutV.addLayout(self.layoutPrincipal)
         layoutV.addLayout(super().controlBtn(self.listBtnOpt))
 
         self.layout.addWidget(self.box)
 
+    def set_body_elements(self, titleContainer,  *args, **kwargs):
+        widget = QWidget(self)
+        widget.setFixedSize(320, round(220 * 0.81))
+        widget.setStyleSheet(
+            """
+            border: 2px dashed #00BCD4;
+            border-radius: 15px;
+            background-color: rgba(255, 255, 255, 0.9);
+        """
+        )
+
+        layout = QVBoxLayout(widget)
+        label = self.set_text(titleContainer)
+
+        self.audioBar = AudioBar()
+        layoutH = QHBoxLayout()
+        layoutH.setContentsMargins(0, 0, 0, 0)
+        layoutH.setSpacing(0)
+        layoutH.addStretch(1)
+        layoutH.addWidget(self.audioBar)
+        layoutH.addStretch(1)
+
+        layout.addWidget(label)
+        layout.addLayout(layoutH)
+        widget.setLayout(layout)
+
+        layoutContain = QHBoxLayout()
+        layoutContain.addStretch(1)
+        layoutContain.addWidget(widget)
+        layoutContain.addStretch(1)
+
+        return layoutContain
+
+
     def lunch_principal(self):
         self.recController.stop_recording(sv=False)
+        self.audioBar.stop_timer()
         self.controller.change_page("Prenregistrer")
 
     def stop_enregistrement(self):
-        self.recController.stop_recording()
-        self.controller.change_page("StopEnregistrer")
+        self.audioBar.stop_timer()
+        if self.recController.stop_recording() == True:
+            self.controller.set_file_transcription_path(self.recController.get_final_file_path())
+            self.controller.change_page("StopEnregistrer")
+        else:
+            self.controller.change_page("Prenregistrer")
+
 
