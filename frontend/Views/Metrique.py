@@ -1,30 +1,59 @@
 import math
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QGridLayout, QSizePolicy, QPushButton, QGraphicsDropShadowEffect, QMenu
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QGridLayout, QSizePolicy, QPushButton, QFileDialog, QGraphicsDropShadowEffect, QMenu
 from PySide6.QtSvgWidgets import QSvgWidget
-from PySide6.QtCore import Qt, QTimer, QSize
+from PySide6.QtCore import Qt, QTimer, QSize, QThreadPool
 from PySide6.QtGui import QIcon, QPixmap, QColor, QAction
 
 from frontend.controllers.Menu_controllers import NavigationController
-from frontend.controllers.Result_controllers import ResultController
-
+from frontend.controllers.Result_worker import ControllerLoaderWorker
+from frontend.Widgets.Loader import LoaderWidget
 
 class Metrique(QWidget):
     def __init__(self):
         super().__init__()
         self.navController = NavigationController()
-        #instanciation du controller qui va s'occuper de faire les calculs
-        tx = self.navController.get_text_transcription()
-        fp = self.navController.get_file_transcription_path()
-        self.resultatController = ResultController(transcrip=tx , file_path=fp)
+        self.navController.enable_toolbar()
+        self.thread_pool = QThreadPool()
+
+
+        self.resultatController = None
+
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.timer = QTimer() #timer qui va nous servir a faire les animation
         self.timer.timeout.connect(self.update_animation)
         self.animated_widgets = [] #ce tableau contiendra tout les widget svg
         self.size_card = 150
+
+
         self.layout = QVBoxLayout(self) #layout principal
         self.layout.setAlignment(Qt.AlignCenter)
 
-        self.layout.addStretch(1)
+        self.loader()
+        QTimer.singleShot(10, self.load_controller)
+
+    def loader(self):
+        print("1")
+        self.layout.addWidget(LoaderWidget())
+
+    def load_controller(self):
+        print("2")
+        tx = self.navController.get_text_transcription()
+        fp = self.navController.get_file_transcription_path()
+        self.worker = ControllerLoaderWorker(text=tx, file_path=fp)
+        self.worker.signals.finished.connect(self.on_controller_loaded)
+
+        self.thread_pool.start(self.worker)
+
+    def on_controller_loaded(self, controller):
+        print("3")
+        self.resultatController = controller
+        # Nettoie la vue actuelle (loader)
+        while self.layout.count():
+            item = self.layout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
+        self.layout.addStretch(2)
         self.container()
         self.layout.addStretch(1)
         self.bottom()
@@ -65,7 +94,8 @@ class Metrique(QWidget):
         btn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         btn.setMinimumSize(90, 25)
         btn.setCursor(Qt.PointingHandCursor)
-        btn.clicked.connect(lambda : self.show_menu(btn))
+        #btn.clicked.connect(lambda : self.show_menu(btn))
+        btn.clicked.connect(self.save)
         hbox.addStretch(2)
         hbox.addWidget(btn)
         self.layout.addLayout(hbox)
@@ -173,6 +203,26 @@ class Metrique(QWidget):
     def return_home(self):
         self.navController.change_page("Home")
 
+    def save(self):
+        filename = ""
+        while not filename:
+            filename, _ = QFileDialog.getSaveFileName(
+                None,
+                "Enregistrer l'audio",
+                    "analyse_Ortholyse",
+                "Fichier PDF (*.pdf);; Fichier Word (*.docx);;Fichier JSON(*.json);; Fichier CSV(*.csv)",
+            )
+
+            if not filename:
+                # L'utilisateur a annulé → on l'avertit
+                return
+
+
+        if filename.lower().endswith(".pdf"):
+            self.resultatController.export_pdf()
+        elif filename.lower().endswith(".docx"):
+            self.resultatController.export_docx()
+
     def show_menu(self, btn:QPushButton):
 
         menu = QMenu(self)
@@ -193,6 +243,7 @@ class Metrique(QWidget):
 
         # Afficher le menu sous le bouton
         menu.exec(btn.mapToGlobal(btn.rect().bottomLeft()))
+
 
     def export_as_pdf(self):
         self.resultatController.export_pdf()

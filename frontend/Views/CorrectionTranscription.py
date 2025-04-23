@@ -1,8 +1,7 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QSizePolicy, QHBoxLayout
 
-from backend.transcription import transcription
-from frontend.Widgets.AudioPlayer import AudioPlayer
+
 from frontend.Widgets.Feuille import Feuille
 
 

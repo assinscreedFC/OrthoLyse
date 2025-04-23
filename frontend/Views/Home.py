@@ -1,5 +1,5 @@
-from PySide6.QtCore import Qt, QEvent, QSize
-from PySide6.QtGui import QFont, QPixmap, QFontDatabase, QIcon
+from PySide6.QtCore import Qt, QSize
+from PySide6.QtGui import QFont, QPixmap, QIcon
 from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout, QSizePolicy, QPushButton, QVBoxLayout
 
 from frontend.controllers.Menu_controllers import NavigationController

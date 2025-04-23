@@ -1,7 +1,6 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QSizePolicy, QHBoxLayout, QLabel
-import json
-from backend.transcription import transcription
+from PySide6.QtWidgets import QWidget, QSizePolicy, QHBoxLayout
+
 from frontend.Widgets.AudioPlayer import AudioPlayer
 from frontend.Widgets.Feuille import Feuille
 

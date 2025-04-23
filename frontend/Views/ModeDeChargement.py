@@ -1,6 +1,6 @@
 from PySide6 import QtCore
-from PySide6.QtCore import Qt, QEvent
-from PySide6.QtGui import QPalette, QColor, QFontDatabase, QFont, QIcon
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QFont, QIcon
 from PySide6.QtWidgets import (
     QWidget,
     QSizePolicy,
@@ -10,7 +10,6 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
 )
 
-from frontend.Widgets.Header import Header
 from frontend.controllers.Menu_controllers import NavigationController
 
 
