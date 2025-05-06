@@ -179,3 +179,9 @@ test_lemmes.tsv
 projet_lemmatiseur/config.cfg
 train.ipynb
 train_ia.ipynb
+_templates
+_build
+*.rst
+*.docx
+conf.py
+*.bat

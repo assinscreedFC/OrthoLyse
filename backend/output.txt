@@ -1,5 +1,0 @@
-nom utilisateur: Alice
-âge: 25
-profession: Développeuse
-ville residence: Paris
-texte: Exemple de texte.
