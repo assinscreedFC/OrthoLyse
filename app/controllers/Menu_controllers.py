@@ -169,6 +169,7 @@ class NavigationController:
         Définit le texte de transcription.
         """
         self.text_transcription = text
+        self.enonce_pertinant = None # juste pour init la variable
 
     def get_text_transcription(self):
         """
@@ -250,6 +251,15 @@ class NavigationController:
         Retourne le texte initial de transcription.
         """
         return self.first_text_transcription
+    
+    def set_enonce_pertinant(self, enonce):
+        """Definit le texte contenant uniquement les enonces pertinant"""
+        self.enonce_pertinant = enonce
+
+    def get_enonce_pertinant(self):
+        """Retourne le texte contenant uniquement les enonces pertinant"""
+        return self.enonce_pertinant
+
 
     def go_to_previous_page(self):
         """
