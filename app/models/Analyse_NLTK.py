@@ -1,6 +1,10 @@
 # import nltk
 # nltk.download('punkt_tab') #il faut d'abord installer ca pour utiliser le reste
-
+# =============================================================================
+# Auteur  : HAMMOUCHE Anis
+# Email   : anis.hammouche@etu.u-paris.fr
+# Version : 1.0
+# =============================================================================
 import nltk.tokenize as to  # type:ignore
 from num2words import num2words
 from nltk.stem.snowball import SnowballStemmer  # type:ignore

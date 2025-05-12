@@ -1,3 +1,8 @@
+# =============================================================================
+# Auteur  : HAMMOUCHE Anis
+# Email   : anis.hammouche@etu.u-paris.fr
+# Version : 1.0
+# =============================================================================
 import ctypes
 import sys
 import os

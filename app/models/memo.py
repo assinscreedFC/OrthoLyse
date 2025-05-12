@@ -1,3 +1,8 @@
+# =============================================================================
+# Auteur  : GUIDJOU Danil
+# Email   : danil.guidjou@etu.u-paris.fr
+# Version : 1.0
+# =============================================================================
 import threading
 import pyaudio
 import wave

@@ -1,3 +1,8 @@
+# =============================================================================
+# Auteur  : GUIDJOU Danil
+# Email   : danil.guidjou@etu.u-paris.fr
+# Version : 1.0
+# =============================================================================
 from app.models.memo import Memo
 
 class RecordeController:

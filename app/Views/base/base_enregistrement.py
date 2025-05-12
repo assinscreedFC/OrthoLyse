@@ -1,3 +1,8 @@
+# =============================================================================
+# Auteur  : GUIDJOU Danil
+# Email   : danil.guidjou@etu.u-paris.fr
+# Version : 1.0
+# =============================================================================
 from abc import ABCMeta, abstractmethod
 from PySide6.QtGui import QIcon, QPixmap, QFont
 from PySide6.QtWidgets import (

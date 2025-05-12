@@ -1,3 +1,8 @@
+# =============================================================================
+# Auteur  : GUIDJOU Danil
+# Email   : danil.guidjou@etu.u-paris.fr
+# Version : 1.0
+# =============================================================================
 import math
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QGridLayout, QSizePolicy, QPushButton, QFileDialog, QGraphicsDropShadowEffect, QMenu
 from PySide6.QtSvgWidgets import QSvgWidget
@@ -111,7 +116,7 @@ class Metrique(QWidget):
         self.btn.setMinimumSize(90, 25)
         self.btn.setMaximumSize(105, 35)
         self.btn.setCursor(Qt.PointingHandCursor)
-        self.btn.clicked.connect(self.save)
+        self.btn.clicked.connect(self.show_menu)
         hbox.addStretch(2)
         hbox.addWidget(self.btn)
         self.layout.addLayout(hbox)
@@ -231,14 +236,28 @@ class Metrique(QWidget):
     def return_home(self):
         self.navController.change_page("Home")
 
-    def save(self):
+   
+    def save(self, ext):
         filename = ""
+        # Dictionnaire des extensions et filtres associés
+        filters = {
+            "pdf": "Fichier PDF (*.pdf)",
+            "docx": "Fichier Word (*.docx)",
+            "json": "Fichier JSON (*.json)",
+            "csv": "Fichier CSV (*.csv)"
+        }
+
+        # Construire la chaîne de filtres avec l'extension par défaut en premier
+        all_filters = list(filters.items())
+        all_filters.sort(key=lambda item: item[0] != ext)  # met l'ext désirée en premier
+
+        filter_string = ";;".join(f[1] for f in all_filters)
         while not filename:
             filename, _ = QFileDialog.getSaveFileName(
                 None,
                 "Enregistrer l'audio",
-                    "analyse_Ortholyse",
-                "Fichier PDF (*.pdf);; Fichier Word (*.docx);;Fichier JSON(*.json);; Fichier CSV(*.csv)",
+                "analyse_Ortholyse",
+                filter_string,
             )
 
             if not filename:
@@ -251,33 +270,30 @@ class Metrique(QWidget):
         elif filename.lower().endswith(".docx"):
             self.resultatController.export_docx()
 
-    def show_menu(self, btn:QPushButton):
+    def show_menu(self):
 
         menu = QMenu(self)
 
         # Actions pour les options du menu
         pdf_action = QAction("PDF", self)
         docx_action = QAction("DOCX", self)
-        svg_action = QAction("CSV", self)
+        csv_action = QAction("CSV", self)
+        json_action = QAction("JSON", self)
 
-            # Connecter les actions à leurs fonctions (par exemple, pour l'export)
-        pdf_action.triggered.connect(self.export_as_pdf)
-        docx_action.triggered.connect(self.export_as_docx)
+        # Connecter les actions à leurs fonctions (par exemple, pour l'export)
+        pdf_action.triggered.connect(lambda : self.save("pdf"))
+        docx_action.triggered.connect(lambda : self.save("docx"))
+        csv_action.triggered.connect(lambda : self.save("csv"))
+        json_action.triggered.connect(lambda : self.save("json"))
 
             # Ajouter les actions au menu
         menu.addAction(pdf_action)
         menu.addAction(docx_action)
-        menu.addAction(svg_action)
-
+        menu.addAction(csv_action)
+        menu.addAction(json_action)
         # Afficher le menu sous le bouton
-        menu.exec(btn.mapToGlobal(btn.rect().bottomLeft()))
+        menu.exec(self.btn.mapToGlobal(self.btn.rect().bottomLeft()))
 
-
-    def export_as_pdf(self):
-        self.resultatController.export_pdf()
-
-    def export_as_docx(self):
-        self.resultatController.export_docx()
 
     def resizeEvent(self, event):
         if self.isLoaderOn :

@@ -1,3 +1,8 @@
+# =============================================================================
+# Auteur  : GUIDJOU Danil
+# Email   : danil.guidjou@etu.u-paris.fr
+# Version : 1.0
+# =============================================================================
 from app.models.Analyse_NLTK import Analyse_NLTK
 from app.models.operation_fichier import file_size_sec
 from app.models.exportation import exporte_docx, exporte_pdf, exporte_json
@@ -5,7 +10,7 @@ from app.models.exportation import exporte_docx, exporte_pdf, exporte_json
 import json
 
 # Ouvrir le fichier settings en mode lecture
-with open("./settings.json", 'r', encoding='utf-8') as fichier:
+with open("./assets/JSON/settings.json", 'r', encoding='utf-8') as fichier:
     # Charger le contenu du fichier JSON
     parametres = json.load(fichier)
 

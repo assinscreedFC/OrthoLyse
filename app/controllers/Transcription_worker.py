@@ -1,3 +1,8 @@
+# =============================================================================
+# Auteur  : HAMMOUCHE Anis
+# Email   : anis.hammouche@etu.u-paris.fr
+# Version : 1.0
+# =============================================================================
 from PySide6.QtCore import QObject, Signal, QRunnable
 
 from app.models.transcription import transcription

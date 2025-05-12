@@ -16,6 +16,11 @@ modele_dispo = ["base", "small", "medium", "turbo"]
 
 
 def custom_tokenize(text):
+    # =============================================================================
+    # Auteur  : HAMMOUCHE Anis
+    # Email   : anis.hammouche@etu.u-paris.fr
+    # Version : 1.0
+    # =============================================================================
     """
     Tokenise un texte en séparant par espaces, puis combine les tokens qui sont issus
     d'une division par apostrophe. Par exemple, "m'appeler" sera reconstruit en un seul token.
@@ -42,6 +47,11 @@ def custom_tokenize(text):
 
 
 def extraire_mapping_depuis_segments(combined_segments):
+    # =============================================================================
+    # Auteur  : HAMMOUCHE Anis
+    # Email   : anis.hammouche@etu.u-paris.fr
+    # Version : 1.0
+    # =============================================================================
     """
     Combine les segments en un seul texte global et crée un mapping mot par mot.
     Dans chaque segment, si des word-level timestamps sont fournis, on combine les tokens
@@ -125,6 +135,11 @@ def extraire_mapping_depuis_segments(combined_segments):
 
 
 def ajuster_mapping(ancien_text, nouveau_text, ancien_mapping):
+    # =============================================================================
+    # Auteur  : HAMMOUCHE Anis
+    # Email   : anis.hammouche@etu.u-paris.fr
+    # Version : 1.0
+    # =============================================================================
     """
     Ajuste le mapping des timestamps en fonction du nouveau texte.
 
@@ -197,11 +212,18 @@ def ajuster_mapping(ancien_text, nouveau_text, ancien_mapping):
     return new_mapping
 
 def get_model():
-    with open(os.path.abspath("./settings.json"), 'r', encoding='utf-8') as fichier:
+
+    with open(os.path.abspath("./assets/JSON/settings.json"), 'r', encoding='utf-8') as fichier:
         settings = json.load(fichier)
     return settings["modelWhisper"]
 
 def transcription(file_path, ):
+    # =============================================================================
+    # Auteur  : GUIDJOU Danil
+    # Email   : danil.guidjou@etu.u-paris.fr
+    # Version : 1.0
+    # =============================================================================
+
     """
     Fonction qui retourne un dictionnaire avec le texte complet et le mapping des mots,
     avec les timestamps au niveau des mots.
