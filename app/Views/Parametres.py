@@ -279,10 +279,8 @@ class Parametres(QWidget):
 
         try:
             metriques = self.settings_controller.get_metriques()
-            champs = [
-                "duree", "nbrMot", "motDif", "nbrEnonce",
-                "morpheme", "morphemeEnonce", "lemme"
-            ]
+            champs = ["duree", "Nombre Mot", "Nombre Mot Different", "Nombre Enonce",
+                      "Nombre Morpheme", "Nombre Morpheme Par Enonce", "Nombre Lemme"]
 
             for i, champ in enumerate(champs):
                 if champ in metriques and i < len(self.inputs):
@@ -302,8 +300,8 @@ class Parametres(QWidget):
         try:
             valide = True
             nouvelles_valeurs = {}
-            labels = ["duree", "nbrMot", "motDif", "nbrEnonce",
-                      "morpheme", "morphemeEnonce", "lemme"]
+            labels = ["duree", "Nombre Mot", "Nombre Mot Different", "Nombre Enonce",
+                      "Nombre Morpheme", "Nombre Morpheme Par Enonce", "Nombre Lemme"]
 
             for i, label in enumerate(labels):
                 champ = self.inputs[i]
