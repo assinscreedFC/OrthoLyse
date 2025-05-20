@@ -27,6 +27,7 @@ class Enregistrement(BaseEnregistrement):
         # connecter ici si pas déjà fait
         self.recController.start_recording(self.audioBar)
         self.audioBar.start_timer()
+        self.controller.disable_toolbar()
 
     def container(self):
         self.boutons =[]
@@ -88,7 +89,7 @@ class Enregistrement(BaseEnregistrement):
         self.zoneBlue.setFixedSize(320, round(220 * 0.81))
         self.zoneBlue.setStyleSheet(
             """
-            border: 2px dashed #017399;
+            border: 2px solid #017399;
             border-radius: 15px;
             background-color: rgba(255, 255, 255, 0.9);
         """

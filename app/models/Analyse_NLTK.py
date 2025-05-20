@@ -17,10 +17,10 @@ import json
 import os
 
 # Ouvrir le fichier JSON en mode lecture
-with open(os.path.abspath("./models/suffixe.json"), 'r', encoding='utf-8') as fichier:
+with open(os.path.abspath("./assets/JSON/suffixe.json"), 'r', encoding='utf-8') as fichier:
     # Charger le contenu du fichier JSON
     suffixes = json.load(fichier)
-with open(os.path.abspath("./models/prefixe.json"), 'r', encoding='utf-8') as fichier:
+with open(os.path.abspath("./assets/JSON/prefixe.json"), 'r', encoding='utf-8') as fichier:
     prefixes = json.load(fichier)
 
 

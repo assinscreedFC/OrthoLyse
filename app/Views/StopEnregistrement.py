@@ -21,6 +21,8 @@ from app.controllers.Transcription_worker import TranscriptionRunnable
 
 
 class StopEnregistrement(BaseEnregistrement):
+    """Classe fille de la classe base_enregistrement, permet d'afficher la page lors de l'arret de l'enregistrement """
+    
     def __init__(self):
         super().__init__()  # utilisation du constructeur du parent sans modification
 
@@ -32,6 +34,7 @@ class StopEnregistrement(BaseEnregistrement):
         self.audio_player.set_file_path(self.audio_filename)
         self.audio_player.reload_audio()    # la on recharge le player audio
         self.controller.set_audio_player(self.audio_player)
+        self.controller.enable_toolbar()
 
     def container(self):
         self.boutons =[]
@@ -89,7 +92,7 @@ class StopEnregistrement(BaseEnregistrement):
         self.zoneBlue.setFixedSize(320, round(220 * 0.81))
         self.zoneBlue.setStyleSheet(
             """
-            border: 2px dashed #017399;
+            border: 2px solid #017399;
             border-radius: 15px;
             background-color: rgba(255, 255, 255, 0.9);
         """
@@ -125,6 +128,10 @@ class StopEnregistrement(BaseEnregistrement):
         """Cette methode permet de lancer la page prenregistrer
         mais d'abord elle libere le player audio, et supprime le nom de fichier mis dans le controllers
         ainsi que le fichier audio enregistrer"""
+
+        # arrete le lecteur
+        self.controller.get_audio_player().toggle_play_pause() if self.controller.get_audio_player().is_playing == False else None
+
         self.controller.get_audio_player().liberer_fichier_audio()
         self.controller.set_file_transcription_path("")
 
@@ -134,6 +141,8 @@ class StopEnregistrement(BaseEnregistrement):
 
     def lunch_transcription(self):
         """"Cette methode lunce un thread qui s'occupe de faire la transcription et lance la page transcription"""
+        # arrete le lecteur
+        self.controller.get_audio_player().toggle_play_pause() if self.controller.get_audio_player().is_playing == False else None
         # Récupérer le chemin du fichier audio actuellement sélectionné
         current_file = self.controller.get_file_transcription_path()
 

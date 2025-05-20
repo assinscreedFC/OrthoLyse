@@ -14,6 +14,8 @@ from app.controllers.Result_worker import ControllerLoaderWorker
 from app.Widgets.Loader import LoaderWidget
 
 class Metrique(QWidget):
+    """Cette classe permet l'affichage des resultats"""
+
     def __init__(self):
         super().__init__()
         self.navController = NavigationController()
@@ -34,15 +36,18 @@ class Metrique(QWidget):
 
     def showEvent(self, event):
         super().showEvent(event)
+        # Nettoie la vue actuelle 
+        self.clear_layout(self.layout)
+        self.loader()
         self.load_controller()
 
     def loader(self):
-        print("1")
+        """affiche le loader a l'ecran"""
         self.isLoaderOn = True
         self.layout.addWidget(LoaderWidget())
 
     def load_controller(self):
-        print("2")
+        """lance le worker"""
         # !! on fait l'analyse seulement sur les enonces pertinants si y'en a pas alors on fait l'analyse sur tout le texte
         tx = self.navController.get_enonce_pertinant() if self.navController.get_enonce_pertinant() else self.navController.get_text_transcription()
         fp = self.navController.get_file_transcription_path()
@@ -52,7 +57,7 @@ class Metrique(QWidget):
         self.thread_pool.start(self.worker)
 
     def on_controller_loaded(self, controller):
-        print("3")
+        """lorsque on recoit le signal de fin on affiche la page final (sup le loader)"""
         self.resultatController = controller
         self.navController.enable_toolbar()  # activation de la toolbar
         # Nettoie la vue actuelle (loader)
@@ -67,6 +72,7 @@ class Metrique(QWidget):
         self.navController.central_widget.setCursor(Qt.ArrowCursor)
 
     def clear_layout(self, layout):
+        """Permet de nettoyer la vue actuelle"""
         while layout.count():
             item = layout.takeAt(0)
             if item.widget():
@@ -154,6 +160,7 @@ class Metrique(QWidget):
         return wid
 
     def set_bottomCard(self, info):
+        
         hBox = QVBoxLayout()
         label = QLabel(f' {info["getter"]()[0]} {info["label"]}')
         label.setStyleSheet("color: #4c4c4c; background-color: transparent")
@@ -166,6 +173,7 @@ class Metrique(QWidget):
         return hBox
 
     def update_animation(self):
+        """Permet de faire l'animation """
         all_finished = True
         cleaned_widgets = []
 
@@ -199,8 +207,9 @@ class Metrique(QWidget):
             self.timer.stop()
 
     def update_svg(self, svg_widget, value):
+        """Dessine le svg selon la valuer """
         percentage = int(value)
-        value = min(value, 100)
+        value = min(value, 100) #valuer max du svg est 100%
         angle = 180 - (value * 1.8)
         rad = math.radians(angle)
         needle_length = 40
@@ -238,13 +247,15 @@ class Metrique(QWidget):
 
    
     def save(self, ext):
+        """Ouvre un explorateur de fichier pour coisir l'emplacement de l'analyse"""
         filename = ""
         # Dictionnaire des extensions et filtres associés
         filters = {
             "pdf": "Fichier PDF (*.pdf)",
             "docx": "Fichier Word (*.docx)",
             "json": "Fichier JSON (*.json)",
-            "csv": "Fichier CSV (*.csv)"
+            "csv": "Fichier CSV (*.csv)",
+            "txt": "Fichier TXT (*.txt)"
         }
 
         # Construire la chaîne de filtres avec l'extension par défaut en premier
@@ -261,17 +272,22 @@ class Metrique(QWidget):
             )
 
             if not filename:
-                # L'utilisateur a annulé → on l'avertit
                 return
 
 
         if filename.lower().endswith(".pdf"):
-            self.resultatController.export_pdf()
+            self.resultatController.export_pdf(filename)
         elif filename.lower().endswith(".docx"):
-            self.resultatController.export_docx()
+            self.resultatController.export_docx(filename)
+        elif filename.lower().endswith(".json"):
+            self.resultatController.export_json(filename)
+        elif filename.lower().endswith(".csv"):
+            self.resultatController.export_csv(filename)
+        elif filename.lower().endswith(".txt"):
+            self.resultatController.export_txt(filename)
 
     def show_menu(self):
-
+        """affiche un menu lors du clique sur le bouton exporter """
         menu = QMenu(self)
 
         # Actions pour les options du menu
@@ -279,18 +295,21 @@ class Metrique(QWidget):
         docx_action = QAction("DOCX", self)
         csv_action = QAction("CSV", self)
         json_action = QAction("JSON", self)
+        txt_action = QAction("TXT", self)
 
         # Connecter les actions à leurs fonctions (par exemple, pour l'export)
         pdf_action.triggered.connect(lambda : self.save("pdf"))
         docx_action.triggered.connect(lambda : self.save("docx"))
         csv_action.triggered.connect(lambda : self.save("csv"))
         json_action.triggered.connect(lambda : self.save("json"))
+        txt_action.triggered.connect(lambda : self.save("txt"))
 
             # Ajouter les actions au menu
         menu.addAction(pdf_action)
         menu.addAction(docx_action)
         menu.addAction(csv_action)
         menu.addAction(json_action)
+        menu.addAction(txt_action)
         # Afficher le menu sous le bouton
         menu.exec(self.btn.mapToGlobal(self.btn.rect().bottomLeft()))
 
@@ -298,10 +317,10 @@ class Metrique(QWidget):
     def resizeEvent(self, event):
         if self.isLoaderOn :
             return
-        self.resize_card(event)
-        self.resize_button()
+        self.adjust_card(event)
+        self.adjust_button()
 
-    def resize_card(self, event=None):
+    def adjust_card(self, event=None):
         window_width = event.size().width()
         window_height = event.size().height()
 
@@ -326,11 +345,11 @@ class Metrique(QWidget):
             label = card.findChild(QLabel)
             if label:
                 font = label.font()
-                new_font_size = max(10, min(int(new_card_size * 0.08), 16))  # Entre 10 et 16
+                new_font_size = max(8, min(int(new_card_size * 0.01), 14))  # Entre 10 et 14
                 font.setPointSize(new_font_size)
                 label.setFont(font)
 
-    def resize_button(self):
+    def adjust_button(self):
         parent = self.parentWidget() or self  # Utilise self si pas de parent
 
         window_width = parent.width()
@@ -354,7 +373,7 @@ class Metrique(QWidget):
 
         # Ajuster la taille de police
         font = self.btn.font()
-        font.setPointSize(max(8, min(int(new_height * 0.5), 14)))
+        font.setPointSize(max(7, min(int(new_height * 0.5), 12)))
         self.btn.setFont(font)
 
 

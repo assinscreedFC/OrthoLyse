@@ -12,7 +12,8 @@ from PySide6.QtWidgets import (
 from app.Views.base.base_enregistrement import BaseEnregistrement
 
 class Prenregistrement(BaseEnregistrement):
-    """Cette vue est la premiere vue de la phase d'enregistrement"""
+    """Classe fille de la classe base_enregistrement permet d'afficher la page de preparation a l'enregistrement"""
+    
     def __init__(self):
         super().__init__()
 
@@ -70,7 +71,7 @@ class Prenregistrement(BaseEnregistrement):
         self.zoneBlue.setFixedSize(320, round(220 * 0.81))
         self.zoneBlue.setStyleSheet(
             """
-            border: 2px dashed #017399;
+            border: 2px solid #017399;
             border-radius: 15px;
             background-color: rgba(255, 255, 255, 0.9);
         """

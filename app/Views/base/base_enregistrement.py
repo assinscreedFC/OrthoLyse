@@ -180,11 +180,11 @@ class BaseEnregistrement(QWidget, metaclass=WidgetABCMeta):
         self.zoneBlue.setFixedSize(zoneBlue_width, round(220 * 0.81))
 
         # Affichage des tailles réelles après redimensionnement
-        print(f"Réelles tailles après redimensionnement:")
-        print(f"Header - Taille réelle: {self.bar.size().width()}x{self.bar.size().height()}")
-        print(f"Line - Taille réelle: {self.line.size().width()}x{self.line.size().height()}")
-        print(f"Container - Taille réelle: {self.box.size().width()}x{self.box.size().height()}")
-        print(f"")
+        #print(f"Réelles tailles après redimensionnement:")
+        #print(f"Header - Taille réelle: {self.bar.size().width()}x{self.bar.size().height()}")
+       # print(f"Line - Taille réelle: {self.line.size().width()}x{self.line.size().height()}")
+        #print(f"Container - Taille réelle: {self.box.size().width()}x{self.box.size().height()}")
+        #print(f"")
 
     def adjust_icons(self, event=None):
         min_size = 35
@@ -193,7 +193,6 @@ class BaseEnregistrement(QWidget, metaclass=WidgetABCMeta):
         print(new_size)
 
         new_size = max(min_size, min(new_size, max_size))
-        print(new_size)
         for btn in self.boutons:
             btn.setMinimumSize(new_size, new_size)
             btn.setMaximumSize(new_size, new_size)

@@ -103,7 +103,7 @@ class Header(QWidget):
         print(target_width)
         self.btn_settings.setFixedSize(target_width, target_height)
         self.btn_settings.setIconSize(QSize(target_width, target_height))
-
+    #
     def adjustFontSize(self):
         """
         Ajuste la taille de la police du titre en fonction de la largeur de la fenêtre.

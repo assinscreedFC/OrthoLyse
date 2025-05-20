@@ -9,6 +9,7 @@ from PySide6.QtCore import QTimer, Qt, Signal
 import random
 
 class AudioBar(QWidget):
+    """Bars reactive au son qu'on recoit depuis le module memo"""
     def __init__(self, parent=None, bar_count=20):
         super().__init__(parent)
         self.bar_count = bar_count
@@ -65,7 +66,12 @@ class AudioBar(QWidget):
             heures = self.seconds_elapsed // 3600
             minutes = self.seconds_elapsed // 60
             seconds = self.seconds_elapsed % 60
-            self.timer_label.setText(f"{heures:02}:{minutes:02}:{seconds:02}")
+            #on affiche les heures seulement qu'on atteint une heure 
+            if heures >0 :
+                self.timer_label.setText(f"{heures:02}:{minutes:02}:{seconds:02}")
+            else :
+                self.timer_label.setText(f"{minutes:02}:{seconds:02}")
+            
 
     def start_timer(self):
         self.seconds_elapsed = 0

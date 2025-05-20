@@ -22,6 +22,10 @@ from PySide6.QtWidgets import QApplication
 
 from app.Views.mainWindow import MyWindow
 
+
+
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     icon=QIcon("./assets/Logo/logo2.svg")

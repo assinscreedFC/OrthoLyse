@@ -265,7 +265,6 @@ class NavigationController:
         """Retourne le texte contenant uniquement les enonces pertinant"""
         return self.enonce_pertinant
 
-
     def go_to_previous_page(self):
         """
         Revient à la page précédente si elle existe dans l'historique.

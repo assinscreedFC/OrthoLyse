@@ -1,5 +1,5 @@
 # =============================================================================
-# Auteur  : HAMMOUCHE Anis
+# Auteur  : HAMMOUCHE Anis 
 # Email   : anis.hammouche@etu.u-paris.fr
 # Version : 1.0
 # =============================================================================
@@ -12,6 +12,9 @@ class WorkerSignals(QObject):
 
 
 class TranscriptionRunnable(QRunnable):
+    """ Cete classe permet de lancer un thread secondaire dans un QRunnable pour lancer la transription
+    parametres : controller : le menu controller pour extraire le fichier de la transcription ... // parent : la classe applente
+    """
     def __init__(self, controller,parent=None):
         super().__init__()
         self.controller = controller
@@ -19,7 +22,7 @@ class TranscriptionRunnable(QRunnable):
         self.signals.setParent(parent)
 
     def run(self):
-        # Change le curseur en mode de chargement sur le widget central
+        # Change le curseur en mode de chargement sur le widget central  !!!!! action a ne pas faire car ca cree des crash 
         #self.controller.central_widget.setCursor(Qt.WaitCursor)
 
         # Exécute la transcription
@@ -36,4 +39,4 @@ class TranscriptionRunnable(QRunnable):
         #self.controller.central_widget.setCursor(Qt.ArrowCursor) !!! il ne faut pas manip qt dans un thread secondaire
         print("transcription finished")
 
-        self.signals.fin.emit()
+        self.signals.fin.emit() # !!! envoie d'un signal de fin pour prevenir la fin du traitement 

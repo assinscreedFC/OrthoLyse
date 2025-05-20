@@ -1,6 +1,6 @@
 # =============================================================================
-# Auteur  : GUIDJOU Danil
-# Email   : danil.guidjou@etu.u-paris.fr
+# Auteur  : BENHAMMA Dania
+# Email   : dania.benhamma@etu.u-paris.fr
 # Version : 1.0
 # =============================================================================
 import os
@@ -8,9 +8,8 @@ import json
 
 class SettingsController:
     def __init__(self):
-        self.chemin_fichier = os.path.normpath(
-            os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets/JSON", "settings.json")
-        )
+        self.chemin_fichier = "./assets/JSON/settings.json"
+
 
     def charger_parametres(self):
         if not os.path.exists(self.chemin_fichier):

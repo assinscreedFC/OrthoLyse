@@ -9,6 +9,7 @@ from PySide6.QtCore import QTimer
 
 
 class LoaderWidget(QWidget):
+    """Affiche le loader """
     def __init__(self, parent=None):
         super().__init__(parent)
 
